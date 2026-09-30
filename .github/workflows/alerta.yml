@@ -1,0 +1,27 @@
+name: Alerta da Sentinela
+
+on:
+  schedule:
+    - cron: "30 22 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      forcar_envio:
+        description: "Enviar o e-mail mesmo sem sinais aprovados (para testar)"
+        type: boolean
+        default: true
+
+jobs:
+  alerta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install yfinance pandas numpy
+      - run: python alerta.py
+        env:
+          EMAIL_USUARIO: ${{ secrets.EMAIL_USUARIO }}
+          EMAIL_SENHA_APP: ${{ secrets.EMAIL_SENHA_APP }}
+          EMAIL_DESTINO: ${{ secrets.EMAIL_DESTINO }}
+          FORCAR_ENVIO: ${{ github.event.inputs.forcar_envio || 'false' }}
