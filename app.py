@@ -1,4 +1,5 @@
 import re
+import numpy as np
 import pandas as pd
 import yfinance as yf
 import plotly.graph_objects as go
@@ -193,22 +194,52 @@ def grafico(dados, ticker, janela_visivel, fim, janela_pivo, tolerancia, max_niv
     return fig
 
 
-# ============ SENTINELA: SETUPS ============
+# ============ MOTOR DE SETUPS (usado pela Sentinela e pelo Historiador) ============
 def quando(k):
     return "hoje" if k == 0 else ("há 1 pregão" if k == 1 else f"há {k} pregões")
 
 
-def avaliar_setups(d, janela_pivo, tolerancia):
-    """Procura os setups no pregão mais recente. Devolve uma lista de sinais."""
-    sinais = []
-    if len(d) < 30:
-        return sinais
-    hoje = d.iloc[-1]
+def preparar_arrays(d, janela_pivo):
+    """Converte a tabela em listas numéricas e marca os pivôs de uma vez só (rápido)."""
+    tamanho = 2 * janela_pivo + 1
+    maximas, minimas = d["High"], d["Low"]
+    topo = (maximas == maximas.rolling(tamanho, center=True).max()).to_numpy()
+    fundo = (minimas == minimas.rolling(tamanho, center=True).min()).to_numpy()
+    return {
+        "close": d["Close"].to_numpy(), "high": maximas.to_numpy(), "low": minimas.to_numpy(),
+        "vol": d["Volume"].to_numpy(), "volmed": d["VolMedia20"].to_numpy(),
+        "mme9": d["MME9"].to_numpy(), "mme21": d["MME21"].to_numpy(),
+        "mma200": d["MMA200"].to_numpy(), "ifr": d["IFR"].to_numpy(),
+        "piv_topo": np.where(topo, maximas.to_numpy(), np.nan),
+        "piv_fundo": np.where(fundo, minimas.to_numpy(), np.nan),
+    }
 
-    # 1) Cruzamento das MME 9 e 21 (nos últimos 3 pregões)
-    diferenca = d["MME9"] - d["MME21"]
-    for k in range(3):
-        atual, anterior = diferenca.iloc[-1 - k], diferenca.iloc[-2 - k]
+
+def niveis_no_dia(a, i, janela_pivo, tolerancia):
+    """Suporte e resistência mais próximos, usando só pivôs já confirmados até o dia anterior."""
+    ini, fim = max(0, i - 250), i - janela_pivo
+    if fim <= ini:
+        return None, None
+    precos = np.concatenate([a["piv_topo"][ini:fim], a["piv_fundo"][ini:fim]])
+    precos = precos[~np.isnan(precos)].tolist()
+    niveis = [n[0] for n in agrupar_niveis(precos, tolerancia) if n[1] >= 2]
+    referencia = a["close"][i - 1]
+    suporte = max((n for n in niveis if n < referencia), default=None)
+    resistencia = min((n for n in niveis if n > referencia), default=None)
+    return suporte, resistencia
+
+
+def setups_no_dia(a, i, janela_pivo, tolerancia, janela_cruzamento=1):
+    """Procura os setups no dia i, olhando apenas dados até esse dia."""
+    sinais = []
+    if i < 30:
+        return sinais
+    fech, maxima, minima = a["close"][i], a["high"][i], a["low"][i]
+
+    # 1) Cruzamento das MME 9 e 21
+    for k in range(janela_cruzamento):
+        atual = a["mme9"][i - k] - a["mme21"][i - k]
+        anterior = a["mme9"][i - k - 1] - a["mme21"][i - k - 1]
         if anterior <= 0 < atual:
             sinais.append(("Cruzamento MME 9/21", "🟢 Alta",
                            f"MME 9 cruzou para cima da MME 21 {quando(k)}"))
@@ -219,38 +250,89 @@ def avaliar_setups(d, janela_pivo, tolerancia):
             break
 
     # 2) IFR extremo a favor da tendência de longo prazo
-    if not pd.isna(hoje["MMA200"]):
-        if hoje["IFR"] < 30 and hoje["Close"] > hoje["MMA200"]:
+    ifr, mma200 = a["ifr"][i], a["mma200"][i]
+    if not np.isnan(mma200):
+        if ifr < 30 and fech > mma200:
             sinais.append(("IFR sobrevendido em tendência de alta", "🟢 Alta",
-                           f"IFR em {br(hoje['IFR'], 1)}, preço acima da MMA 200"))
-        elif hoje["IFR"] > 70 and hoje["Close"] < hoje["MMA200"]:
+                           f"IFR em {br(ifr, 1)}, preço acima da MMA 200"))
+        elif ifr > 70 and fech < mma200:
             sinais.append(("IFR sobrecomprado em tendência de baixa", "🔴 Baixa",
-                           f"IFR em {br(hoje['IFR'], 1)}, preço abaixo da MMA 200"))
+                           f"IFR em {br(ifr, 1)}, preço abaixo da MMA 200"))
 
-    # 3 e 4) Suportes e resistências calculados até ontem, testados com o pregão de hoje
-    suportes, resistencias = suportes_e_resistencias(d.iloc[:-1], janela_pivo, tolerancia, 1)
-    vol_media = hoje["VolMedia20"]
-    forca_volume = hoje["Volume"] / vol_media if vol_media and vol_media > 0 else 0
-    volume_forte = forca_volume >= 1.5
-    texto_volume = f"volume {br(forca_volume, 1)}x a média"
+    # 3 e 4) Suportes e resistências
+    suporte, resistencia = niveis_no_dia(a, i, janela_pivo, tolerancia)
+    vol_media = a["volmed"][i]
+    forca = a["vol"][i] / vol_media if vol_media and vol_media > 0 else 0
+    volume_forte = forca >= 1.5
+    texto_volume = f"volume {br(forca, 1)}x a média"
 
-    if resistencias:
-        r = resistencias[0][0]
-        if hoje["Close"] > r and volume_forte:
+    if resistencia is not None:
+        if fech > resistencia and volume_forte:
             sinais.append(("Rompimento de resistência", "🟢 Alta",
-                           f"Fechou acima de R$ {br(r)} com {texto_volume}"))
-        elif hoje["High"] >= r * 0.99 and hoje["Close"] <= r:
+                           f"Fechou acima de R$ {br(resistencia)} com {texto_volume}"))
+        elif (maxima >= resistencia * 0.99 and fech <= resistencia
+              and a["high"][i - 1] < resistencia * 0.99):  # só o primeiro toque
             sinais.append(("Testando resistência", "🔴 Baixa",
-                           f"Encostou em R$ {br(r)} e fechou abaixo"))
-    if suportes:
-        s_ = suportes[0][0]
-        if hoje["Close"] < s_ and volume_forte:
+                           f"Encostou em R$ {br(resistencia)} e fechou abaixo"))
+    if suporte is not None:
+        if fech < suporte and volume_forte:
             sinais.append(("Perda de suporte", "🔴 Baixa",
-                           f"Fechou abaixo de R$ {br(s_)} com {texto_volume}"))
-        elif hoje["Low"] <= s_ * 1.01 and hoje["Close"] >= s_:
+                           f"Fechou abaixo de R$ {br(suporte)} com {texto_volume}"))
+        elif (minima <= suporte * 1.01 and fech >= suporte
+              and a["low"][i - 1] > suporte * 1.01):  # só o primeiro toque
             sinais.append(("Testando suporte", "🟢 Alta",
-                           f"Encostou em R$ {br(s_)} e fechou acima"))
+                           f"Encostou em R$ {br(suporte)} e fechou acima"))
     return sinais
+
+
+def avaliar_setups(d, janela_pivo, tolerancia):
+    """Sinais do pregão mais recente (cruzamentos dos últimos 3 pregões)."""
+    a = preparar_arrays(d, janela_pivo)
+    return setups_no_dia(a, len(d) - 1, janela_pivo, tolerancia, janela_cruzamento=3)
+
+
+# ============ HISTORIADOR: BACKTEST ============
+@st.cache_data(ttl=3600, show_spinner=False)
+def backtest(universo, janela_pivo, tolerancia, horizonte, dias=252):
+    """Aplica os setups a cada pregão do último ano e mede o que aconteceu depois."""
+    todos = baixar_universo(universo)
+    registros, base = [], []
+    for ticker, d in todos.items():
+        a = preparar_arrays(d, janela_pivo)
+        fech = a["close"]
+        n = len(d)
+        for i in range(max(31, n - dias), n):
+            futuro = i + horizonte
+            retorno = (fech[futuro] / fech[i] - 1) * 100 if futuro < n else np.nan
+            if not np.isnan(retorno):
+                base.append(retorno)
+            for setup, direcao, _ in setups_no_dia(a, i, janela_pivo, tolerancia):
+                registros.append({"Ativo": ticker, "Data": d.index[i], "Setup": setup,
+                                  "Direção": direcao, "Retorno": retorno})
+    return pd.DataFrame(registros), np.array(base)
+
+
+def resumir(sinais, base):
+    """Calcula acertos, erros e médias por setup."""
+    taxa_base_alta = (base > 0).mean() * 100
+    taxa_base_baixa = (base < 0).mean() * 100
+    linhas = []
+    for (setup, direcao), g in sinais.groupby(["Setup", "Direção"]):
+        encerrados = g.dropna(subset=["Retorno"])
+        sinal = 1 if direcao == "🟢 Alta" else -1
+        resultado = encerrados["Retorno"] * sinal   # positivo = o preço foi para o lado previsto
+        acertos, erros = resultado[resultado > 0], resultado[resultado <= 0]
+        taxa = len(acertos) / len(resultado) * 100 if len(resultado) else np.nan
+        base_dir = taxa_base_alta if sinal == 1 else taxa_base_baixa
+        linhas.append({
+            "Setup": setup, "Direção": direcao,
+            "Sinais": len(g), "Em aberto": len(g) - len(encerrados),
+            "Acertos": len(acertos), "Erros": len(erros),
+            "Taxa de acerto": taxa, "Acaso": base_dir, "Vantagem": taxa - base_dir,
+            "Resultado médio": resultado.mean(),
+            "Média nos acertos": acertos.mean(), "Média nos erros": erros.mean(),
+        })
+    return pd.DataFrame(linhas).sort_values("Vantagem", ascending=False)
 
 
 # ============ PÁGINAS ============
@@ -315,7 +397,7 @@ def pagina_graficos(texto, periodo_visivel, janela_pivo, tolerancia, max_niveis)
             st.plotly_chart(fig, key=f"grafico_{acao}", config=config_grafico())
 
 
-def pagina_sentinela(janela_pivo, tolerancia, max_niveis):
+def pagina_sentinela(universo, janela_pivo, tolerancia, max_niveis):
     st.title("🛰️ Sentinela")
     st.write("Varre o Ibovespa e os principais ETFs em busca de setups técnicos "
              "no pregão mais recente. Os sinais são pontos de partida para a sua "
@@ -331,14 +413,9 @@ def pagina_sentinela(janela_pivo, tolerancia, max_niveis):
             "**Rompimento de resistência / perda de suporte:** o fechamento atravessou o nível "
             "mais próximo com volume pelo menos 1,5x a média de 20 dias. Volume alto indica "
             "convicção no movimento.\n\n"
-            "**Testando suporte / resistência:** o preço encostou no nível (até 1% de distância) "
-            "e fechou do lado de dentro. Mostra o nível sendo defendido, mas não garante que "
+            "**Testando suporte / resistência:** o preço chegou ao nível (até 1% de distância) "
+            "vindo de longe e fechou do lado de dentro. Mostra o nível sendo defendido, mas não garante que "
             "ele vai segurar.")
-
-    with st.expander("Universo de ativos"):
-        texto_universo = st.text_area("Códigos analisados (edite à vontade)",
-                                      " ".join(UNIVERSO_PADRAO), height=140)
-    universo = tuple(limpar_lista(texto_universo))
 
     with st.spinner(f"Varrendo {len(universo)} ativos... na primeira vez leva alguns segundos"):
         todos = baixar_universo(universo)
@@ -391,15 +468,125 @@ def pagina_sentinela(janela_pivo, tolerancia, max_niveis):
     st.plotly_chart(fig, key="grafico_sentinela", config=config_grafico())
 
 
+def pct(v, casas=1, sinal=False):
+    if pd.isna(v):
+        return "—"
+    prefixo = "+" if sinal and v > 0 else ""
+    return f"{prefixo}{br(v, casas)}%"
+
+
+def pagina_historiador(universo, janela_pivo, tolerancia):
+    st.title("🧪 Historiador")
+    st.write("Aplica os setups da Sentinela a cada pregão do último ano e verifica o que "
+             "aconteceu com o preço depois. Resultados passados não garantem resultados futuros.")
+
+    horizonte = st.radio("Avaliar o resultado depois de", [5, 10, 20], index=1, horizontal=True,
+                         format_func=lambda h: f"{h} pregões")
+
+    with st.spinner("Voltando no tempo... a primeira análise leva alguns segundos"):
+        sinais, base = backtest(universo, janela_pivo, tolerancia, horizonte)
+
+    if sinais.empty or len(base) == 0:
+        st.warning("Não encontrei sinais suficientes para analisar. Tente novamente em alguns minutos.")
+        return
+
+    resumo = resumir(sinais, base)
+
+    with st.expander("Como ler esta página", expanded=True):
+        st.markdown(
+            f"Para cada sinal, olhamos o fechamento **{horizonte} pregões depois**. "
+            "Um sinal de alta **acertou** se o preço subiu nesse período; um de baixa, se caiu.\n\n"
+            "**Acaso** é a taxa de acerto de quem apostasse na mesma direção em um dia qualquer, "
+            "sem setup nenhum. Se o mercado subiu em 55% dos períodos, um setup de alta que acerta "
+            "55% não trouxe informação nova. Por isso, a coluna mais importante é a **Vantagem**: "
+            "quantos pontos percentuais o setup acertou acima do acaso.\n\n"
+            "**Resultado médio** mostra quanto o preço andou a favor (+) ou contra (−) o sinal, "
+            "em média. Um setup pode acertar pouco e ainda assim ser bom, se ganhar muito quando "
+            "acerta e perder pouco quando erra.\n\n"
+            "**Em aberto** são os sinais recentes que ainda não completaram o prazo.")
+
+    # Gráfico da vantagem de cada setup
+    rotulos = [f"{r['Setup']} ({r['Direção'][2:]})" for _, r in resumo.iterrows()]
+    cores = ["seagreen" if v > 0 else "indianred" for v in resumo["Vantagem"]]
+    fig = go.Figure(go.Bar(
+        x=resumo["Vantagem"], y=rotulos, orientation="h", marker_color=cores,
+        text=[pct(v, 1, True).replace("%", " p.p.") for v in resumo["Vantagem"]],
+        textposition="outside", hovertemplate="%{y}: %{x:.1f} p.p.<extra></extra>",
+    ))
+    fig.add_vline(x=0, line_color="gray")
+    fig.update_layout(title="Vantagem sobre o acaso (pontos percentuais)", height=380,
+                      margin=dict(l=10, r=40, t=50, b=20), dragmode=False)
+    fig.update_yaxes(autorange="reversed", fixedrange=True)
+    fig.update_xaxes(fixedrange=True)
+    st.plotly_chart(fig, key="grafico_vantagem", config=config_grafico())
+
+    # Tabela resumo
+    tabela = pd.DataFrame({
+        "Setup": resumo["Setup"], "Direção": resumo["Direção"],
+        "Sinais": resumo["Sinais"], "Acertos": resumo["Acertos"], "Erros": resumo["Erros"],
+        "Em aberto": resumo["Em aberto"],
+        "Taxa de acerto": resumo["Taxa de acerto"].map(pct),
+        "Acaso": resumo["Acaso"].map(pct),
+        "Vantagem": resumo["Vantagem"].map(lambda v: pct(v, 1, True).replace("%", " p.p.")),
+        "Resultado médio": resumo["Resultado médio"].map(lambda v: pct(v, 2, True)),
+        "Média nos acertos": resumo["Média nos acertos"].map(lambda v: pct(v, 2, True)),
+        "Média nos erros": resumo["Média nos erros"].map(lambda v: pct(v, 2, True)),
+    })
+    st.dataframe(tabela, hide_index=True)
+
+    periodo_ini = sinais["Data"].min().strftime("%d/%m/%Y")
+    periodo_fim = sinais["Data"].max().strftime("%d/%m/%Y")
+    st.caption(f"{len(sinais)} sinais entre {periodo_ini} e {periodo_fim}, "
+               f"em {sinais['Ativo'].nunique()} ativos.")
+
+    # Detalhe de um setup
+    st.subheader("Sinais individuais")
+    opcoes = [f"{r['Setup']} | {r['Direção']}" for _, r in resumo.iterrows()]
+    escolha = st.selectbox("Escolha um setup", opcoes)
+    setup, direcao = escolha.split(" | ")
+    detalhe = sinais[(sinais["Setup"] == setup) & (sinais["Direção"] == direcao)].copy()
+    detalhe = detalhe.sort_values("Data", ascending=False)
+    sinal = 1 if direcao == "🟢 Alta" else -1
+
+    def situacao(r):
+        if pd.isna(r):
+            return "⏳ Em aberto"
+        return "✅ Acerto" if r * sinal > 0 else "❌ Erro"
+
+    st.dataframe(pd.DataFrame({
+        "Data": detalhe["Data"].dt.strftime("%d/%m/%Y"),
+        "Ativo": detalhe["Ativo"],
+        f"Variação em {horizonte} pregões": detalhe["Retorno"].map(lambda v: pct(v, 2, True)),
+        "Resultado": detalhe["Retorno"].map(situacao),
+    }), hide_index=True)
+
+    with st.expander("Limitações desta análise"):
+        st.markdown(
+            "**Um ano é pouco.** Um setup pode ter ido bem num ano de alta e mal num ano de "
+            "baixa. Trate os números como pistas, não como leis.\n\n"
+            "**Viés de sobrevivência.** Testamos as empresas que estão no Ibovespa *hoje*. As que "
+            "caíram tanto que saíram do índice não entram no teste, o que tende a deixar os "
+            "resultados de alta mais bonitos do que foram de verdade.\n\n"
+            "**Sem custos.** Corretagem, emolumentos, impostos e a diferença entre o preço do "
+            "sinal e o preço que você conseguiria pagar não foram descontados.\n\n"
+            "**Sinais repetidos.** Um mesmo ativo pode disparar o mesmo setup em dias seguidos "
+            "(como vários testes de um suporte), e cada dia conta como um sinal.")
+
+
 # ============ INTERFACE ============
 with st.sidebar:
-    pagina = st.radio("Página", ["📈 Gráficos", "🛰️ Sentinela"])
+    pagina = st.radio("Página", ["📈 Gráficos", "🛰️ Sentinela", "🧪 Historiador"])
     st.divider()
     st.header("Configurações")
 
     if pagina == "📈 Gráficos":
         texto = st.text_input("Ativos (separados por vírgula)", "PETR4, VALE3, ITUB4, BOVA11")
         periodo_visivel = st.radio("Período visível", list(JANELAS_VISIVEIS), index=2)
+    else:
+        with st.expander("Universo de ativos"):
+            texto_universo = st.text_area("Códigos analisados (edite à vontade)",
+                                          " ".join(UNIVERSO_PADRAO), height=160)
+        universo = tuple(limpar_lista(texto_universo))
 
     st.subheader("Suportes e resistências")
     janela_pivo = st.slider("Janela dos pivôs (dias)", 2, 15, 5)
@@ -411,5 +598,7 @@ with st.sidebar:
 
 if pagina == "📈 Gráficos":
     pagina_graficos(texto, periodo_visivel, janela_pivo, tolerancia, max_niveis)
+elif pagina == "🛰️ Sentinela":
+    pagina_sentinela(universo, janela_pivo, tolerancia, max_niveis)
 else:
-    pagina_sentinela(janela_pivo, tolerancia, max_niveis)
+    pagina_historiador(universo, janela_pivo, tolerancia)
