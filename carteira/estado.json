@@ -3,7 +3,89 @@
   "eventos_do_dia": {
     "compradas": [],
     "encerradas": [],
-    "novos_sinais": []
+    "novos_sinais": [
+      {
+        "ativo": "ABEV3",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "AZZA3",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "BBSE3",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "EGIE3",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "GGBR4",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "HAPV3",
+        "setups": "Cruzamento MME 9/21 + Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "MBRF3",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "MRVE3",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "PCAR3",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "POMO4",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "PSSA3",
+        "setups": "Cruzamento MACD + Cruzamento MME 9/21 + Rompimento de resistência",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "RADL3",
+        "setups": "Cruzamento MME 9/21 + Rompimento de resistência",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "SMFT3",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "TIMS3",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "USIM5",
+        "setups": "Cruzamento MACD + Cruzamento MME 9/21",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "VIVT3",
+        "setups": "Cruzamento MACD + Cruzamento MME 9/21",
+        "bem_avaliado": true
+      }
+    ]
   },
-  "atualizado_em": "03/10/2026 10:03"
+  "atualizado_em": "05/10/2026 23:23",
+  "ultimo_dia": "2026-10-05"
 }
