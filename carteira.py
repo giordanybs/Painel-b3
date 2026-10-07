@@ -80,6 +80,23 @@ def encerrar(op, dia, preco, motivo, eventos):
                                   "resultado_rs": round(VALOR * pct / 100, 2)})
 
 
+def candle_valido(d, dia):
+    """O Yahoo às vezes entrega o candle mais recente incompleto (abertura vazia ou zerada)."""
+    if dia not in d.index:
+        return False
+    valores = d.loc[dia, ["Open", "High", "Low", "Close"]]
+    return bool(valores.notna().all() and (valores > 0).all())
+
+
+def dia_completo(todos, dia, minimo=0.8):
+    """Só processa um pregão quando a maioria dos ativos tem o candle do dia completo."""
+    com_dia = [d for d in todos.values() if dia in d.index]
+    if not com_dia:
+        return False
+    validos = sum(candle_valido(d, dia) for d in com_dia)
+    return validos / len(com_dia) >= minimo
+
+
 def processar_dia(ops, todos, arrays, dia, resumo_comb, crit, eventos):
     texto_dia = dia.strftime("%Y-%m-%d")
 
@@ -88,8 +105,8 @@ def processar_dia(ops, todos, arrays, dia, resumo_comb, crit, eventos):
         if op["status"] != "Pendente":
             continue
         d = todos.get(op["ativo"])
-        if d is None or dia not in d.index:
-            continue
+        if d is None or not candle_valido(d, dia):
+            continue   # sem candle válido hoje: a ordem continua pendente
         entrada = round(float(d.loc[dia, "Open"]), 2)
         niveis = json.loads(op["niveis"])
         abaixo = [n for n in niveis if n < entrada]
@@ -115,7 +132,7 @@ def processar_dia(ops, todos, arrays, dia, resumo_comb, crit, eventos):
         if op["status"] != "Aberta":
             continue
         d = todos.get(op["ativo"])
-        if d is None or dia not in d.index:
+        if d is None or not candle_valido(d, dia):
             continue
         abertura, maxima, minima = (float(d.loc[dia, c]) for c in ("Open", "High", "Low"))
         stop, alvo = float(op["stop"]), float(op["alvo"])
@@ -173,6 +190,10 @@ def main():
         resumo_comb = motor.resumir(motor.combinar(sinais, crit["janela_combinacao"]), base)
         arrays = {t: motor.preparar_arrays(d, crit["janela_pivo"]) for t, d in todos.items()}
         for dia in dias:
+            if not dia_completo(todos, dia):
+                print(f"Candles de {dia:%d/%m/%Y} ainda incompletos no Yahoo; "
+                      "esse pregão será processado na próxima execução.")
+                break
             processar_dia(ops, todos, arrays, dia, resumo_comb, crit, eventos)
             estado["ultimo_dia"] = dia.strftime("%Y-%m-%d")
     else:
