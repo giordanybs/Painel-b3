@@ -6,22 +6,57 @@
     "novos_sinais": [
       {
         "ativo": "ABEV3",
-        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "setups": "Cruzamento MME 9/21 + Rompimento de resistência + Testando suporte",
         "bem_avaliado": true
       },
       {
-        "ativo": "AZZA3",
+        "ativo": "AXIA3",
         "setups": "Rompimento de resistência + Testando suporte",
         "bem_avaliado": true
       },
       {
-        "ativo": "BBSE3",
+        "ativo": "BRAP4",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "BRAV3",
         "setups": "Cruzamento MME 9/21 + Testando suporte",
         "bem_avaliado": true
       },
       {
-        "ativo": "EGIE3",
+        "ativo": "CMIG4",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "COGN3",
+        "setups": "Cruzamento MME 9/21 + Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "CPFE3",
         "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "CSNA3",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "DIRR3",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "ENGI11",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "EQTL3",
+        "setups": "Rompimento de resistência + Testando suporte",
         "bem_avaliado": true
       },
       {
@@ -31,17 +66,37 @@
       },
       {
         "ativo": "HAPV3",
-        "setups": "Cruzamento MME 9/21 + Rompimento de resistência + Testando suporte",
+        "setups": "Cruzamento MME 9/21 + Divergência no MACD + Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "IGTI11",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "ISAE4",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "ITSA4",
+        "setups": "Rompimento de resistência + Testando suporte",
         "bem_avaliado": true
       },
       {
         "ativo": "MBRF3",
-        "setups": "Cruzamento MACD + Testando suporte",
+        "setups": "Cruzamento MACD + Cruzamento MME 9/21 + Testando suporte",
         "bem_avaliado": true
       },
       {
-        "ativo": "MRVE3",
-        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "ativo": "MULT3",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "NATU3",
+        "setups": "Cruzamento MACD + Rompimento de resistência + Testando suporte",
         "bem_avaliado": true
       },
       {
@@ -51,22 +106,27 @@
       },
       {
         "ativo": "POMO4",
+        "setups": "Cruzamento MACD + Cruzamento MME 9/21 + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "RAIL3",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "RDOR3",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "RENT3",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "TEND3",
         "setups": "Cruzamento MACD + Testando suporte",
-        "bem_avaliado": true
-      },
-      {
-        "ativo": "PSSA3",
-        "setups": "Cruzamento MACD + Cruzamento MME 9/21 + Rompimento de resistência",
-        "bem_avaliado": true
-      },
-      {
-        "ativo": "RADL3",
-        "setups": "Cruzamento MME 9/21 + Rompimento de resistência",
-        "bem_avaliado": true
-      },
-      {
-        "ativo": "SMFT3",
-        "setups": "Cruzamento MME 9/21 + Testando suporte",
         "bem_avaliado": true
       },
       {
@@ -76,16 +136,31 @@
       },
       {
         "ativo": "USIM5",
-        "setups": "Cruzamento MACD + Cruzamento MME 9/21",
+        "setups": "Cruzamento MACD + Cruzamento MME 9/21 + Testando suporte",
         "bem_avaliado": true
       },
       {
-        "ativo": "VIVT3",
-        "setups": "Cruzamento MACD + Cruzamento MME 9/21",
+        "ativo": "VAMO3",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "WEGE3",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "BOVA11",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "SMAL11",
+        "setups": "Rompimento de resistência + Testando suporte",
         "bem_avaliado": true
       }
     ]
   },
-  "atualizado_em": "05/10/2026 23:23",
-  "ultimo_dia": "2026-10-05"
+  "atualizado_em": "06/10/2026 22:43",
+  "ultimo_dia": "2026-10-06"
 }
