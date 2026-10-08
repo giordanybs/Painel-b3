@@ -1,10 +1,67 @@
 {
   "inicio": "2026-10-05",
   "eventos_do_dia": {
-    "compradas": [],
-    "encerradas": [],
-    "novos_sinais": []
+    "compradas": [
+      "ABEV3",
+      "AZZA3",
+      "BBSE3",
+      "EGIE3",
+      "GGBR4",
+      "HAPV3",
+      "MBRF3",
+      "MRVE3",
+      "PCAR3",
+      "POMO4",
+      "PSSA3",
+      "RADL3",
+      "SMFT3",
+      "TIMS3",
+      "USIM5",
+      "VIVT3"
+    ],
+    "encerradas": [
+      {
+        "ativo": "ABEV3",
+        "motivo": "Stop",
+        "resultado_pct": -0.52,
+        "resultado_rs": -5.19
+      },
+      {
+        "ativo": "BBSE3",
+        "motivo": "Stop",
+        "resultado_pct": -0.61,
+        "resultado_rs": -6.12
+      },
+      {
+        "ativo": "VIVT3",
+        "motivo": "Stop",
+        "resultado_pct": -0.26,
+        "resultado_rs": -2.57
+      }
+    ],
+    "novos_sinais": [
+      {
+        "ativo": "BRAP4",
+        "setups": "Cruzamento MACD + Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "NATU3",
+        "setups": "Cruzamento MACD + Rompimento de resistência",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "SANB11",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "TEND3",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "bem_avaliado": false
+      }
+    ]
   },
-  "atualizado_em": "07/10/2026 (restaurado após correção)",
-  "ultimo_dia": "2026-10-05"
+  "atualizado_em": "07/10/2026 23:10",
+  "ultimo_dia": "2026-10-06"
 }
