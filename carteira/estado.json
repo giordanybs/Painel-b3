@@ -2,66 +2,127 @@
   "inicio": "2026-10-05",
   "eventos_do_dia": {
     "compradas": [
+      "ABEV3",
+      "CSNA3",
+      "USIM5",
+      "VIVT3",
       "BRAP4",
+      "CMIG4",
+      "CURY3",
       "NATU3",
-      "SANB11",
-      "TEND3"
+      "RADL3",
+      "SMFT3"
     ],
     "encerradas": [
       {
-        "ativo": "AZZA3",
+        "ativo": "EGIE3",
+        "motivo": "Stop",
+        "resultado_pct": -2.14,
+        "resultado_rs": -21.38
+      },
+      {
+        "ativo": "RADL3",
+        "motivo": "Stop",
+        "resultado_pct": -3.84,
+        "resultado_rs": -38.43
+      },
+      {
+        "ativo": "SMFT3",
         "motivo": "Alvo",
-        "resultado_pct": 10.23,
-        "resultado_rs": 102.29
+        "resultado_pct": 9.01,
+        "resultado_rs": 90.12
+      },
+      {
+        "ativo": "ABEV3",
+        "motivo": "Stop",
+        "resultado_pct": -0.66,
+        "resultado_rs": -6.63
       },
       {
         "ativo": "USIM5",
         "motivo": "Stop",
-        "resultado_pct": -5.53,
-        "resultado_rs": -55.3
+        "resultado_pct": -0.52,
+        "resultado_rs": -5.18
+      },
+      {
+        "ativo": "VIVT3",
+        "motivo": "Stop",
+        "resultado_pct": -0.66,
+        "resultado_rs": -6.62
+      },
+      {
+        "ativo": "MRVE3",
+        "motivo": "Alvo",
+        "resultado_pct": 11.6,
+        "resultado_rs": 116.0
       },
       {
         "ativo": "BRAP4",
         "motivo": "Stop",
-        "resultado_pct": -2.55,
-        "resultado_rs": -25.46
+        "resultado_pct": -0.77,
+        "resultado_rs": -7.7
       },
       {
-        "ativo": "NATU3",
-        "motivo": "Stop",
-        "resultado_pct": -7.98,
-        "resultado_rs": -79.82
+        "ativo": "CURY3",
+        "motivo": "Alvo",
+        "resultado_pct": 4.36,
+        "resultado_rs": 43.63
       },
       {
-        "ativo": "SANB11",
-        "motivo": "Stop",
-        "resultado_pct": -1.56,
-        "resultado_rs": -15.59
+        "ativo": "SMFT3",
+        "motivo": "Alvo",
+        "resultado_pct": 6.28,
+        "resultado_rs": 62.84
       }
     ],
     "novos_sinais": [
       {
-        "ativo": "ABEV3",
+        "ativo": "BRAP4",
+        "setups": "Cruzamento MACD + Divergência no MACD + Rompimento de resistência",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "CMIG4",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "CURY3",
+        "setups": "Cruzamento MACD + Cruzamento MME 9/21 + Rompimento de resistência",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "NATU3",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "bem_avaliado": false
+      },
+      {
+        "ativo": "RADL3",
         "setups": "Cruzamento MME 9/21 + Rompimento de resistência + Testando suporte",
         "bem_avaliado": true
       },
       {
-        "ativo": "CSNA3",
-        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "ativo": "SMFT3",
+        "setups": "Cruzamento MME 9/21 + Divergência no MACD + Rompimento de resistência",
         "bem_avaliado": true
       },
       {
-        "ativo": "USIM5",
-        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "ativo": "BEEF3",
+        "setups": "Rompimento de resistência + Testando suporte",
         "bem_avaliado": true
+      },
+      {
+        "ativo": "SMFT3",
+        "setups": "Divergência no MACD + Rompimento de resistência",
+        "bem_avaliado": false
       },
       {
         "ativo": "VIVT3",
-        "setups": "Cruzamento MACD + Cruzamento MME 9/21 + Rompimento de resistência",
-        "bem_avaliado": true
+        "setups": "Divergência no MACD + Rompimento de resistência",
+        "bem_avaliado": false
       }
     ]
   },
-  "atualizado_em": "08/10/2026 23:23",
-  "ultimo_dia": "2026-10-07"
+  "atualizado_em": "09/10/2026 22:51",
+  "ultimo_dia": "2026-10-09"
 }
