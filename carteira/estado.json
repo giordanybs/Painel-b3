@@ -1,10 +1,55 @@
 {
   "inicio": "2026-10-05",
   "eventos_do_dia": {
-    "compradas": [],
-    "encerradas": [],
-    "novos_sinais": []
+    "compradas": [
+      "BEEF3",
+      "SMFT3",
+      "VIVT3"
+    ],
+    "encerradas": [
+      {
+        "ativo": "NATU3",
+        "motivo": "Stop",
+        "resultado_pct": -3.99,
+        "resultado_rs": -39.87
+      },
+      {
+        "ativo": "RADL3",
+        "motivo": "Stop",
+        "resultado_pct": -1.06,
+        "resultado_rs": -10.55
+      },
+      {
+        "ativo": "BEEF3",
+        "motivo": "Stop",
+        "resultado_pct": -1.65,
+        "resultado_rs": -16.45
+      },
+      {
+        "ativo": "CSNA3",
+        "motivo": "Stop",
+        "resultado_pct": -3.74,
+        "resultado_rs": -37.39
+      }
+    ],
+    "novos_sinais": [
+      {
+        "ativo": "BRAP4",
+        "setups": "Divergência no MACD + Testando suporte",
+        "bem_avaliado": false
+      },
+      {
+        "ativo": "LREN3",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "MRVE3",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": true
+      }
+    ]
   },
-  "atualizado_em": "13/10/2026 22:19",
-  "ultimo_dia": "2026-10-09"
+  "atualizado_em": "14/10/2026 21:43",
+  "ultimo_dia": "2026-10-14"
 }
