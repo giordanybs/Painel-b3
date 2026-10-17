@@ -1,44 +1,10 @@
 {
   "inicio": "2026-10-05",
   "eventos_do_dia": {
-    "compradas": [
-      "LREN3",
-      "MRVE3"
-    ],
-    "encerradas": [
-      {
-        "ativo": "PCAR3",
-        "motivo": "Stop",
-        "resultado_pct": -6.81,
-        "resultado_rs": -68.07
-      },
-      {
-        "ativo": "TEND3",
-        "motivo": "Stop (abriu abaixo)",
-        "resultado_pct": -4.43,
-        "resultado_rs": -44.34
-      },
-      {
-        "ativo": "CMIG4",
-        "motivo": "Stop",
-        "resultado_pct": -3.72,
-        "resultado_rs": -37.24
-      },
-      {
-        "ativo": "LREN3",
-        "motivo": "Stop",
-        "resultado_pct": -0.4,
-        "resultado_rs": -3.98
-      },
-      {
-        "ativo": "MRVE3",
-        "motivo": "Stop",
-        "resultado_pct": -0.38,
-        "resultado_rs": -3.79
-      }
-    ],
+    "compradas": [],
+    "encerradas": [],
     "novos_sinais": []
   },
-  "atualizado_em": "15/10/2026 21:32",
-  "ultimo_dia": "2026-10-15"
+  "atualizado_em": "16/10/2026 21:40",
+  "ultimo_dia": "2026-10-16"
 }
