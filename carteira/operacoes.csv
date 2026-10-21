@@ -9,7 +9,7 @@ id,ativo,setups,bem_avaliado,data_sinal,status,data_entrada,preco_entrada,quanti
 2026-10-05-MRVE3,MRVE3,Cruzamento MME 9/21 + Testando suporte,True,2026-10-05,Encerrada,2026-10-06,6.41,156.0062,6.11,7.16,Resistência,2026-10-09,7.16,Alvo,11.6,116.0,"[4.36, 4.87, 5.96, 6.11, 6.61, 7.16, 8.5, 9.5]"
 2026-10-05-PCAR3,PCAR3,Rompimento de resistência + Testando suporte,True,2026-10-05,Encerrada,2026-10-06,3.28,304.878,3.06,3.93,Resistência,2026-10-15,3.06,Stop,-6.81,-68.07,"[2.27, 2.55, 2.81, 3.06, 3.36, 3.54, 3.93, 4.13]"
 2026-10-05-POMO4,POMO4,Cruzamento MACD + Testando suporte,True,2026-10-05,Aberta,2026-10-06,4.71,212.3142,3.93,6.41,Resistência,,,,,,"[3.93, 5.3, 5.48, 5.87, 6.41, 6.81, 6.98]"
-2026-10-05-PSSA3,PSSA3,Cruzamento MACD + Cruzamento MME 9/21 + Rompimento de resistência,True,2026-10-05,Aberta,2026-10-06,51.54,19.4024,51.11,54.77,Resistência,,,,,,"[42.92, 45.51, 47.25, 48.72, 51.11, 54.77]"
+2026-10-05-PSSA3,PSSA3,Cruzamento MACD + Cruzamento MME 9/21 + Rompimento de resistência,True,2026-10-05,Encerrada,2026-10-06,51.54,19.4024,51.11,54.77,Resistência,2026-10-19,51.11,Stop,-0.93,-9.34,"[42.92, 45.51, 47.25, 48.72, 51.11, 54.77]"
 2026-10-05-RADL3,RADL3,Cruzamento MME 9/21 + Rompimento de resistência,True,2026-10-05,Encerrada,2026-10-06,21.64,46.2107,20.83,24.5,Resistência,2026-10-08,20.83,Stop,-3.84,-38.43,"[16.16, 17.02, 17.62, 19.05, 20.83, 22.0, 23.01, 24.5]"
 2026-10-05-SMFT3,SMFT3,Cruzamento MME 9/21 + Testando suporte,True,2026-10-05,Encerrada,2026-10-06,21.07,47.4608,20.28,22.99,Resistência,2026-10-08,22.99,Alvo,9.01,90.12,"[16.48, 17.95, 19.49, 20.28, 21.17, 22.34, 22.99, 25.2]"
 2026-10-05-TIMS3,TIMS3,Cruzamento MACD + Testando suporte,True,2026-10-05,Aberta,2026-10-06,19.42,51.4933,17.77,23.77,Resistência,,,,,,"[17.77, 20.72, 21.5, 22.57, 23.77, 25.14, 25.82, 27.86]"
@@ -35,3 +35,4 @@ id,ativo,setups,bem_avaliado,data_sinal,status,data_entrada,preco_entrada,quanti
 2026-10-14-BRAP4,BRAP4,Divergência no MACD + Testando suporte,False,2026-10-14,Cancelada,,,,,,,,,Sem suporte abaixo para o stop,,,"[19.93, 20.74, 21.26, 21.98, 22.69, 23.59, 25.41]"
 2026-10-14-LREN3,LREN3,Rompimento de resistência + Testando suporte,True,2026-10-14,Encerrada,2026-10-15,13.42,74.5156,13.38,13.96,Resistência,2026-10-15,13.38,Stop,-0.4,-3.98,"[10.28, 11.71, 12.46, 12.9, 13.38, 13.96, 14.9, 15.46]"
 2026-10-14-MRVE3,MRVE3,Rompimento de resistência + Testando suporte,True,2026-10-14,Encerrada,2026-10-15,7.18,139.2758,7.16,8.5,Resistência,2026-10-15,7.16,Stop,-0.38,-3.79,"[4.36, 4.87, 5.96, 6.61, 7.16, 8.5, 9.5]"
+2026-10-19-GOLD11,GOLD11,Cruzamento MACD + Testando suporte,False,2026-10-19,Aberta,2026-10-20,21.47,46.5766,21.18,22.49,Resistência,,,,,,"[21.18, 21.83, 22.49, 23.33, 24.37, 25.36]"
