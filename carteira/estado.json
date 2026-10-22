@@ -1,25 +1,10 @@
 {
   "inicio": "2026-10-05",
   "eventos_do_dia": {
-    "compradas": [
-      "GOLD11"
-    ],
-    "encerradas": [
-      {
-        "ativo": "PSSA3",
-        "motivo": "Stop",
-        "resultado_pct": -0.93,
-        "resultado_rs": -9.34
-      }
-    ],
-    "novos_sinais": [
-      {
-        "ativo": "GOLD11",
-        "setups": "Cruzamento MACD + Testando suporte",
-        "bem_avaliado": false
-      }
-    ]
+    "compradas": [],
+    "encerradas": [],
+    "novos_sinais": []
   },
-  "atualizado_em": "20/10/2026 21:44",
+  "atualizado_em": "21/10/2026 21:47",
   "ultimo_dia": "2026-10-20"
 }
