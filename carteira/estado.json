@@ -2,9 +2,16 @@
   "inicio": "2026-10-05",
   "eventos_do_dia": {
     "compradas": [],
-    "encerradas": [],
+    "encerradas": [
+      {
+        "ativo": "VIVT3",
+        "motivo": "Alvo",
+        "resultado_pct": 7.62,
+        "resultado_rs": 76.17
+      }
+    ],
     "novos_sinais": []
   },
-  "atualizado_em": "21/10/2026 21:47",
-  "ultimo_dia": "2026-10-20"
+  "atualizado_em": "22/10/2026 21:48",
+  "ultimo_dia": "2026-10-21"
 }
