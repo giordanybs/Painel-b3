@@ -4,14 +4,25 @@
     "compradas": [],
     "encerradas": [
       {
-        "ativo": "VIVT3",
-        "motivo": "Alvo",
-        "resultado_pct": 7.62,
-        "resultado_rs": 76.17
+        "ativo": "GOLD11",
+        "motivo": "Stop",
+        "resultado_pct": -1.45,
+        "resultado_rs": -14.51
       }
     ],
-    "novos_sinais": []
+    "novos_sinais": [
+      {
+        "ativo": "BRAV3",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": false
+      },
+      {
+        "ativo": "TEND3",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "bem_avaliado": false
+      }
+    ]
   },
-  "atualizado_em": "22/10/2026 21:48",
-  "ultimo_dia": "2026-10-21"
+  "atualizado_em": "23/10/2026 21:55",
+  "ultimo_dia": "2026-10-23"
 }
