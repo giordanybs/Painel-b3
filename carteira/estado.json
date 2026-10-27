@@ -2,27 +2,9 @@
   "inicio": "2026-10-05",
   "eventos_do_dia": {
     "compradas": [],
-    "encerradas": [
-      {
-        "ativo": "GOLD11",
-        "motivo": "Stop",
-        "resultado_pct": -1.45,
-        "resultado_rs": -14.51
-      }
-    ],
-    "novos_sinais": [
-      {
-        "ativo": "BRAV3",
-        "setups": "Rompimento de resistência + Testando suporte",
-        "bem_avaliado": false
-      },
-      {
-        "ativo": "TEND3",
-        "setups": "Cruzamento MACD + Testando suporte",
-        "bem_avaliado": false
-      }
-    ]
+    "encerradas": [],
+    "novos_sinais": []
   },
-  "atualizado_em": "23/10/2026 21:55",
+  "atualizado_em": "26/10/2026 22:34",
   "ultimo_dia": "2026-10-23"
 }
