@@ -1,10 +1,80 @@
 {
   "inicio": "2026-10-05",
   "eventos_do_dia": {
-    "compradas": [],
-    "encerradas": [],
-    "novos_sinais": []
+    "compradas": [
+      "BRAV3"
+    ],
+    "encerradas": [
+      {
+        "ativo": "GGBR4",
+        "motivo": "Stop",
+        "resultado_pct": -8.09,
+        "resultado_rs": -80.92
+      },
+      {
+        "ativo": "HAPV3",
+        "motivo": "Stop (abriu abaixo)",
+        "resultado_pct": -32.03,
+        "resultado_rs": -320.32
+      },
+      {
+        "ativo": "MBRF3",
+        "motivo": "Stop",
+        "resultado_pct": -9.52,
+        "resultado_rs": -95.2
+      },
+      {
+        "ativo": "POMO4",
+        "motivo": "Stop",
+        "resultado_pct": -16.66,
+        "resultado_rs": -166.61
+      },
+      {
+        "ativo": "TIMS3",
+        "motivo": "Stop (abriu abaixo)",
+        "resultado_pct": -10.04,
+        "resultado_rs": -100.38
+      },
+      {
+        "ativo": "SMFT3",
+        "motivo": "Stop (abriu abaixo)",
+        "resultado_pct": -40.08,
+        "resultado_rs": -400.84
+      }
+    ],
+    "novos_sinais": [
+      {
+        "ativo": "SUZB3",
+        "setups": "Cruzamento MACD + Rompimento de resistência",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "TIMS3",
+        "setups": "Cruzamento MME 9/21 + Divergência no MACD + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "VBBR3",
+        "setups": "IFR sobrevendido em tendência de alta + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "IVVB11",
+        "setups": "Cruzamento MACD + Cruzamento MME 9/21 + Rompimento de resistência",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "GOLD11",
+        "setups": "Cruzamento MACD + Rompimento de resistência",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "HASH11",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": false
+      }
+    ]
   },
-  "atualizado_em": "26/10/2026 22:34",
-  "ultimo_dia": "2026-10-23"
+  "atualizado_em": "27/10/2026 22:31",
+  "ultimo_dia": "2026-10-26"
 }
