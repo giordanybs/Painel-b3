@@ -2,27 +2,48 @@
   "inicio": "2026-10-05",
   "eventos_do_dia": {
     "compradas": [
-      "SUZB3",
-      "TIMS3",
-      "VBBR3",
-      "IVVB11",
-      "GOLD11",
-      "HASH11"
+      "TEND3",
+      "NASD11"
     ],
-    "encerradas": [],
-    "novos_sinais": [
+    "encerradas": [
       {
-        "ativo": "TEND3",
-        "setups": "Rompimento de resistência + Testando suporte",
-        "bem_avaliado": false
+        "ativo": "BRAV3",
+        "motivo": "Stop",
+        "resultado_pct": -3.24,
+        "resultado_rs": -32.4
       },
       {
-        "ativo": "NASD11",
-        "setups": "Cruzamento MACD + Rompimento de resistência",
+        "ativo": "SUZB3",
+        "motivo": "Alvo",
+        "resultado_pct": 5.23,
+        "resultado_rs": 52.34
+      },
+      {
+        "ativo": "VBBR3",
+        "motivo": "Stop",
+        "resultado_pct": -1.88,
+        "resultado_rs": -18.78
+      },
+      {
+        "ativo": "TEND3",
+        "motivo": "Stop",
+        "resultado_pct": -0.89,
+        "resultado_rs": -8.88
+      }
+    ],
+    "novos_sinais": [
+      {
+        "ativo": "EMBJ3",
+        "setups": "Cruzamento MACD + Cruzamento MME 9/21",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "UGPA3",
+        "setups": "IFR sobrevendido em tendência de alta + Testando suporte",
         "bem_avaliado": true
       }
     ]
   },
-  "atualizado_em": "28/10/2026 22:54",
-  "ultimo_dia": "2026-10-27"
+  "atualizado_em": "29/10/2026 23:05",
+  "ultimo_dia": "2026-10-28"
 }
