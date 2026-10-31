@@ -2,48 +2,73 @@
   "inicio": "2026-10-05",
   "eventos_do_dia": {
     "compradas": [
-      "TEND3",
-      "NASD11"
+      "EMBJ3",
+      "UGPA3",
+      "B3SA3",
+      "CPLE3",
+      "GOAU4",
+      "UGPA3"
     ],
     "encerradas": [
       {
-        "ativo": "BRAV3",
+        "ativo": "NASD11",
         "motivo": "Stop",
-        "resultado_pct": -3.24,
-        "resultado_rs": -32.4
+        "resultado_pct": -1.37,
+        "resultado_rs": -13.66
       },
       {
-        "ativo": "SUZB3",
-        "motivo": "Alvo",
-        "resultado_pct": 5.23,
-        "resultado_rs": 52.34
+        "ativo": "UGPA3",
+        "motivo": "Stop",
+        "resultado_pct": -1.74,
+        "resultado_rs": -17.38
       },
       {
-        "ativo": "VBBR3",
+        "ativo": "GOLD11",
         "motivo": "Stop",
-        "resultado_pct": -1.88,
-        "resultado_rs": -18.78
+        "resultado_pct": -0.82,
+        "resultado_rs": -8.22
       },
       {
-        "ativo": "TEND3",
+        "ativo": "B3SA3",
         "motivo": "Stop",
-        "resultado_pct": -0.89,
-        "resultado_rs": -8.88
+        "resultado_pct": -0.39,
+        "resultado_rs": -3.88
+      },
+      {
+        "ativo": "CPLE3",
+        "motivo": "Stop",
+        "resultado_pct": -0.94,
+        "resultado_rs": -9.35
       }
     ],
     "novos_sinais": [
       {
-        "ativo": "EMBJ3",
-        "setups": "Cruzamento MACD + Cruzamento MME 9/21",
+        "ativo": "B3SA3",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": false
+      },
+      {
+        "ativo": "CPLE3",
+        "setups": "IFR sobrevendido em tendência de alta + Testando suporte",
         "bem_avaliado": true
+      },
+      {
+        "ativo": "GOAU4",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": false
       },
       {
         "ativo": "UGPA3",
         "setups": "IFR sobrevendido em tendência de alta + Testando suporte",
         "bem_avaliado": true
+      },
+      {
+        "ativo": "ENEV3",
+        "setups": "IFR sobrevendido em tendência de alta + Testando suporte",
+        "bem_avaliado": true
       }
     ]
   },
-  "atualizado_em": "29/10/2026 23:05",
-  "ultimo_dia": "2026-10-28"
+  "atualizado_em": "30/10/2026 22:43",
+  "ultimo_dia": "2026-10-30"
 }
