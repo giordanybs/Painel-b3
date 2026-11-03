@@ -1,74 +1,10 @@
 {
   "inicio": "2026-10-05",
   "eventos_do_dia": {
-    "compradas": [
-      "EMBJ3",
-      "UGPA3",
-      "B3SA3",
-      "CPLE3",
-      "GOAU4",
-      "UGPA3"
-    ],
-    "encerradas": [
-      {
-        "ativo": "NASD11",
-        "motivo": "Stop",
-        "resultado_pct": -1.37,
-        "resultado_rs": -13.66
-      },
-      {
-        "ativo": "UGPA3",
-        "motivo": "Stop",
-        "resultado_pct": -1.74,
-        "resultado_rs": -17.38
-      },
-      {
-        "ativo": "GOLD11",
-        "motivo": "Stop",
-        "resultado_pct": -0.82,
-        "resultado_rs": -8.22
-      },
-      {
-        "ativo": "B3SA3",
-        "motivo": "Stop",
-        "resultado_pct": -0.39,
-        "resultado_rs": -3.88
-      },
-      {
-        "ativo": "CPLE3",
-        "motivo": "Stop",
-        "resultado_pct": -0.94,
-        "resultado_rs": -9.35
-      }
-    ],
-    "novos_sinais": [
-      {
-        "ativo": "B3SA3",
-        "setups": "Rompimento de resistência + Testando suporte",
-        "bem_avaliado": false
-      },
-      {
-        "ativo": "CPLE3",
-        "setups": "IFR sobrevendido em tendência de alta + Testando suporte",
-        "bem_avaliado": true
-      },
-      {
-        "ativo": "GOAU4",
-        "setups": "Rompimento de resistência + Testando suporte",
-        "bem_avaliado": false
-      },
-      {
-        "ativo": "UGPA3",
-        "setups": "IFR sobrevendido em tendência de alta + Testando suporte",
-        "bem_avaliado": true
-      },
-      {
-        "ativo": "ENEV3",
-        "setups": "IFR sobrevendido em tendência de alta + Testando suporte",
-        "bem_avaliado": true
-      }
-    ]
+    "compradas": [],
+    "encerradas": [],
+    "novos_sinais": []
   },
-  "atualizado_em": "30/10/2026 22:43",
+  "atualizado_em": "03/11/2026 00:33",
   "ultimo_dia": "2026-10-30"
 }
