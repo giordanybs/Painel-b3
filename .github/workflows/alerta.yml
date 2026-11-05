@@ -2,16 +2,21 @@ name: Alerta da Sentinela
 
 on:
   schedule:
-    - cron: "30 22 * * 1-5"
+    - cron: "13 6 * * 1-5"    # 03h13 de Brasília
+    - cron: "13 9 * * 1-5"    # 06h13 de Brasília (só envia se a primeira não conseguiu)
   workflow_dispatch:
     inputs:
       forcar_envio:
-        description: "Enviar o e-mail mesmo sem sinais aprovados (para testar)"
+        description: "Enviar o e-mail mesmo que já tenha sido enviado (para testar)"
         type: boolean
         default: true
 
 permissions:
   contents: write
+
+concurrency:
+  group: robo-b3
+  cancel-in-progress: false
 
 jobs:
   alerta:
@@ -22,8 +27,11 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install yfinance pandas numpy
-      - name: Carteira simulada
+      - name: Carteira simulada v1
         run: python carteira.py
+        continue-on-error: true
+      - name: Carteira simulada v2
+        run: python carteira_v2.py
         continue-on-error: true
       - name: Alerta por e-mail
         run: python alerta.py
@@ -39,4 +47,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add carteira
           git diff --cached --quiet || git commit -m "Carteira simulada: atualizacao diaria"
+          git pull --rebase --autostash
           git push
