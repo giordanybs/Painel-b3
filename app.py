@@ -897,6 +897,10 @@ def teste_no_passado(universo):
         resultados[regras["nome"]] = {"ops": ops, "periodo": periodo,
                                       "contagens": {k: len(v) for k, v in eventos.items()}}
     ultimos = {t: float(d["Close"].iloc[-1]) for t, d in todos.items()}
+    fechamentos = pd.DataFrame({t: d["Close"] for t, d in todos.items()})
+    if fechamentos.index.tz is not None:
+        fechamentos = fechamentos.tz_localize(None)
+    resultados["_fechamentos"] = fechamentos
     try:
         ibov = motor.baixar_dados("IBOV", "5y")["Close"]
         if ibov.index.tz is not None:
@@ -939,7 +943,7 @@ def estatisticas(ops, ultimos, periodo, ibov):
             ibov_pct = (trecho.iloc[-1] / trecho.iloc[0] - 1) * 100
 
     return {
-        "enc": enc, "curva": curva,
+        "enc": enc, "curva": curva, "_capital": capital_max,
         "Operações encerradas": len(enc),
         "Acertos": f"{int((rs > 0).sum())} ({br((rs > 0).mean() * 100, 0)}%)" if len(enc) else "—",
         "Resultado realizado": reais(realizado, True),
@@ -958,6 +962,120 @@ def estatisticas(ops, ultimos, periodo, ibov):
         "Abertas no fim do período": f"{len(ab)} ({reais(aberto, True)} em aberto)",
         "IBOV no mesmo período": fmt_pc(ibov_pct, 1),
     }
+
+
+FRACAO_CDI = 0.80   # o dinheiro parado rende 80% do CDI
+
+
+@st.cache_data(ttl=24 * 3600, show_spinner=False)
+def cdi_diario(inicio, fim):
+    """Taxa do CDI de cada dia útil (série 12 do Banco Central), em fração do dia."""
+    import urllib.request
+    url = ("https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados?formato=json"
+           f"&dataInicial={pd.Timestamp(inicio):%d/%m/%Y}&dataFinal={pd.Timestamp(fim):%d/%m/%Y}")
+    pedido = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0",
+                                                  "Accept": "application/json"})
+    with urllib.request.urlopen(pedido, timeout=30) as resposta:
+        dados = json.loads(resposta.read().decode("utf-8"))
+    serie = pd.Series({pd.to_datetime(d["data"], dayfirst=True): float(d["valor"]) / 100
+                       for d in dados})
+    return serie.sort_index()
+
+
+def patrimonio(ops, precos, capital, taxa_dia):
+    """Valor da carteira dia a dia: começa com `capital` em caixa; o caixa rende a taxa do dia
+    (80% do CDI); as operações abertas valem pelo fechamento do dia."""
+    o = numerico(ops[ops["status"].isin(["Encerrada", "Aberta", "Saída programada"])])
+    entradas, saidas = {}, {}
+    for k, r in o.iterrows():
+        entradas.setdefault(pd.Timestamp(r["data_entrada"]), []).append(
+            (k, r["ativo"], r["quantidade"], r["preco_entrada"]))
+        if r["status"] == "Encerrada":
+            saidas.setdefault(pd.Timestamp(r["data_saida"]), []).append(
+                (k, r["quantidade"] * r["preco_entrada"] + r["resultado_rs"]))
+    caixa, abertas, valores = capital, {}, []
+    for dia in precos.index:
+        caixa *= 1 + taxa_dia.get(dia, 0.0)
+        for k, ativo, qtd, preco in entradas.get(dia, []):
+            caixa -= qtd * preco
+            abertas[k] = (ativo, qtd)
+        for k, valor in saidas.get(dia, []):
+            caixa += valor
+            abertas.pop(k, None)
+        linha = precos.loc[dia]
+        valores.append(caixa + sum(q * linha.get(a, 0.0) for a, q in abertas.values()))
+    return pd.Series(valores, index=precos.index)
+
+
+def resumo_patrimonio(nome, serie, capital):
+    anos = max((serie.index[-1] - serie.index[0]).days / 365.25, 1e-9)
+    total = serie.iloc[-1] / capital - 1
+    queda = (serie / serie.cummax() - 1).min()
+    return {"Estratégia": nome, "Capital inicial": reais(capital),
+            "Valor final": reais(serie.iloc[-1]), "Retorno total": fmt_pc(total * 100, 1),
+            "Ao ano": fmt_pc(((1 + total) ** (1 / anos) - 1) * 100, 1),
+            "Maior queda": fmt_pc(queda * 100, 1)}
+
+
+def comparacao_justa(resultados, stats, ibov):
+    st.subheader("Comparação justa: com o dinheiro parado rendendo")
+    st.write(f"Cada versão começa com um caixa igual ao seu capital máximo. Enquanto não está "
+             f"numa operação, o dinheiro rende **{br(FRACAO_CDI * 100, 0)}% do CDI**. As "
+             "referências são o BOVA11 comprado e mantido e o caixa inteiro só na renda fixa, "
+             "cada uma com o mesmo capital da versão 2.")
+    precos = resultados["_fechamentos"]
+    a, b = resultados["Versão 2"]["periodo"]
+    precos = precos[(precos.index >= pd.Timestamp(a)) & (precos.index <= pd.Timestamp(b))].ffill()
+    try:
+        cdi = cdi_diario(precos.index[0], precos.index[-1])
+        taxa = FRACAO_CDI * cdi
+        fonte = "CDI diário do Banco Central (série 12)"
+    except Exception:
+        st.warning("Não consegui baixar o CDI do Banco Central agora. Usando uma taxa anual "
+                   "aproximada, que você pode ajustar.")
+        anual = st.number_input("CDI anual médio do período (%)", 0.0, 30.0, 12.0, 0.5,
+                                key="cdi_manual") / 100
+        diaria = (1 + anual) ** (1 / 252) - 1
+        taxa = pd.Series(FRACAO_CDI * diaria, index=precos.index)
+        fonte = f"taxa aproximada de {br(anual * 100, 1)}% ao ano"
+
+    curvas, linhas = {}, []
+    for nome in ("Versão 2", "Versão 1"):
+        capital = stats[nome]["_capital"]
+        if capital > 0:
+            serie = patrimonio(resultados[nome]["ops"], precos, capital, taxa)
+            curvas[f"{nome} + {br(FRACAO_CDI * 100, 0)}% do CDI"] = serie / capital
+            linhas.append(resumo_patrimonio(f"{nome} + {br(FRACAO_CDI * 100, 0)}% do CDI",
+                                            serie, capital))
+    capital = stats["Versão 2"]["_capital"]
+    ref = precos["BOVA11"].dropna() if "BOVA11" in precos else None
+    if (ref is None or ref.empty) and ibov is not None:
+        ref = ibov[(ibov.index >= precos.index[0]) & (ibov.index <= precos.index[-1])]
+    if ref is not None and len(ref):
+        serie = capital * ref / ref.iloc[0]
+        curvas["BOVA11 comprado e mantido"] = serie / capital
+        linhas.append(resumo_patrimonio("BOVA11 comprado e mantido", serie, capital))
+    serie = capital * (1 + taxa.reindex(precos.index).fillna(0)).cumprod()
+    curvas[f"Só {br(FRACAO_CDI * 100, 0)}% do CDI"] = serie / capital
+    linhas.append(resumo_patrimonio(f"Só {br(FRACAO_CDI * 100, 0)}% do CDI", serie, capital))
+
+    st.dataframe(pd.DataFrame(linhas), hide_index=True)
+    cores = ["#26a69a", "#8b93a3", "#64b5f6", "#ffb74d"]
+    fig = go.Figure()
+    for (nome, serie), cor in zip(curvas.items(), cores):
+        fig.add_trace(go.Scatter(x=serie.index, y=(serie - 1) * 100, name=nome,
+                                 line=dict(color=cor, width=2),
+                                 hovertemplate="%{y:.1f}%<extra>" + nome + "</extra>"))
+    fig.add_hline(y=0, line_color="gray")
+    fig.update_layout(template="plotly_dark", paper_bgcolor=FUNDO, plot_bgcolor=FUNDO,
+                      title="Retorno acumulado (%)", height=420, separators=",.",
+                      margin=dict(t=50, b=20, l=10, r=10), dragmode=False,
+                      legend=dict(orientation="h", y=1.1, x=0))
+    fig.update_xaxes(fixedrange=True, hoverformat="%d/%m/%Y")
+    fig.update_yaxes(fixedrange=True, ticksuffix="%")
+    st.plotly_chart(fig, key="curva_justa", config=config_grafico())
+    st.caption(f"Renda fixa: {fonte}, a {br(FRACAO_CDI * 100, 0)}%, sem imposto. BOVA11 pelo preço "
+               "ajustado por proventos. As versões não contam proventos nem impostos.")
 
 
 def regras_v2_markdown():
@@ -1106,10 +1224,10 @@ def pagina_carteira_v2():
         with st.spinner("Baixando 5 anos de dados e simulando as duas versões..."):
             resultados, ultimos, ibov = teste_no_passado(tuple(motor.UNIVERSO_PADRAO))
         stats = {nome: estatisticas(r["ops"], ultimos, r["periodo"], ibov)
-                 for nome, r in resultados.items()}
+                 for nome, r in resultados.items() if not nome.startswith("_")}
         a, b = resultados["Versão 2"]["periodo"]
         st.caption(f"Período testado: {a:%d/%m/%Y} a {b:%d/%m/%Y}.")
-        linhas = [k for k in stats["Versão 2"] if k not in ("enc", "curva")]
+        linhas = [k for k in stats["Versão 2"] if k not in ("enc", "curva", "_capital")]
         st.dataframe(pd.DataFrame({"Indicador": linhas,
                                    "Versão 1": [str(stats["Versão 1"][k]) for k in linhas],
                                    "Versão 2": [str(stats["Versão 2"][k]) for k in linhas]}),
@@ -1129,6 +1247,8 @@ def pagina_carteira_v2():
         fig.update_xaxes(fixedrange=True, hoverformat="%d/%m/%Y")
         fig.update_yaxes(fixedrange=True)
         st.plotly_chart(fig, key="curva_passado_v2", config=config_grafico())
+
+        comparacao_justa(resultados, stats, ibov)
 
         st.write("**Por ano** (pelo ano da venda)")
         anos = []
