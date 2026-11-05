@@ -52,4 +52,7 @@ id,ativo,setups,bem_avaliado,data_sinal,status,data_entrada,preco_entrada,quanti
 2026-10-29-CPLE3,CPLE3,IFR sobrevendido em tendência de alta + Testando suporte,True,2026-10-29,Encerrada,2026-10-30,14.37,69.5894,14.25,14.86,Resistência,2026-10-30,14.25,Stop,-0.94,-9.35,"[11.83, 12.85, 13.75, 14.25, 14.86, 15.38, 16.2, 16.94, 17.96]"
 2026-10-29-GOAU4,GOAU4,Rompimento de resistência + Testando suporte,False,2026-10-29,Aberta,2026-10-30,11.12,89.9281,10.7,11.96,2x o risco,,,,,,"[8.07, 8.96, 9.63, 10.45, 10.7]"
 2026-10-29-UGPA3,UGPA3,IFR sobrevendido em tendência de alta + Testando suporte,True,2026-10-29,Aberta,2026-10-30,31.42,31.8269,29.68,40.54,Resistência,,,,,,"[19.66, 22.02, 24.72, 27.42, 29.68, 32.43, 40.54]"
-2026-10-30-ENEV3,ENEV3,IFR sobrevendido em tendência de alta + Testando suporte,True,2026-10-30,Pendente,,,,,,,,,,,,"[19.54, 21.05, 22.06, 22.67, 23.64, 24.94, 25.99, 26.77, 27.96]"
+2026-10-30-ENEV3,ENEV3,IFR sobrevendido em tendência de alta + Testando suporte,True,2026-10-30,Encerrada,2026-11-03,25.27,39.5726,24.94,25.99,Resistência,2026-11-03,24.94,Stop,-1.41,-14.06,"[19.54, 21.05, 22.06, 22.67, 23.64, 24.94, 25.99, 26.77, 27.96]"
+2026-11-03-RAIZ4,RAIZ4,Cruzamento MME 9/21 + Testando suporte,False,2026-11-03,Pendente,,,,,,,,,,,,"[0.22, 0.25, 0.26, 0.3, 0.33, 0.4, 0.46, 0.49, 0.79, 0.81, 0.88]"
+2026-11-03-WEGE3,WEGE3,Cruzamento MACD + Testando suporte,True,2026-11-03,Pendente,,,,,,,,,,,,"[41.13, 44.92, 46.77, 49.35, 52.88]"
+2026-11-03-GOLD11,GOLD11,Cruzamento MME 9/21 + Rompimento de resistência,True,2026-11-03,Pendente,,,,,,,,,,,,"[21.08, 22.0, 23.02, 23.61, 24.37, 25.36]"

@@ -1,10 +1,35 @@
 {
   "inicio": "2026-10-05",
   "eventos_do_dia": {
-    "compradas": [],
-    "encerradas": [],
-    "novos_sinais": []
+    "compradas": [
+      "ENEV3"
+    ],
+    "encerradas": [
+      {
+        "ativo": "ENEV3",
+        "motivo": "Stop",
+        "resultado_pct": -1.41,
+        "resultado_rs": -14.06
+      }
+    ],
+    "novos_sinais": [
+      {
+        "ativo": "RAIZ4",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "bem_avaliado": false
+      },
+      {
+        "ativo": "WEGE3",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "GOLD11",
+        "setups": "Cruzamento MME 9/21 + Rompimento de resistência",
+        "bem_avaliado": true
+      }
+    ]
   },
-  "atualizado_em": "03/11/2026 23:31",
-  "ultimo_dia": "2026-10-30"
+  "atualizado_em": "04/11/2026 23:39",
+  "ultimo_dia": "2026-11-03"
 }
