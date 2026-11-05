@@ -10,6 +10,10 @@ import importlib
 import motor
 importlib.reload(motor)   # garante que a versão mais nova do motor.py seja usada após cada atualização
 from motor import *  # funções de análise compartilhadas com o alerta
+import carteira
+importlib.reload(carteira)
+import carteira_v2
+importlib.reload(carteira_v2)
 
 st.set_page_config(page_title="Dashboard B3", page_icon="📈", layout="wide")
 
@@ -657,7 +661,7 @@ def reais(v, sinal=False):
 
 
 def pagina_carteira():
-    st.title("💼 Carteira Simulada")
+    st.title("💼 Carteira Simulada: versão 1")
     st.write("Todas as compras em confluências de alta, com R$ 1.000 fictícios cada. "
              "Atualizada automaticamente todo dia útil, após o fechamento.")
 
@@ -857,10 +861,331 @@ def pagina_carteira():
             }), hide_index=True)
 
 
+# ============ CARTEIRA SIMULADA: VERSÃO 2 ============
+PASTA_V2 = os.path.join(PASTA_CARTEIRA, "v2")
+NUMERICAS_V2 = ["forca", "preco_ref", "quantidade", "stop_previsto", "alvo_previsto", "atr",
+                "preco_entrada", "stop", "alvo", "risco_pct", "preco_saida", "resultado_pct",
+                "resultado_rs"]
+
+
+def fmt_pc(v, casas=2):
+    return "—" if pd.isna(v) else f"{'+' if v > 0 else ''}{br(v, casas)}%"
+
+
+def fmt_data(s):
+    return pd.to_datetime(s, errors="coerce").dt.strftime("%d/%m/%Y")
+
+
+def numerico(ops):
+    ops = ops.copy()
+    for c in NUMERICAS_V2:
+        if c in ops:
+            ops[c] = pd.to_numeric(ops[c], errors="coerce")
+    return ops
+
+
+@st.cache_data(ttl=12 * 3600, show_spinner=False)
+def teste_no_passado(universo):
+    """Roda a versão 1 e a versão 2 nos mesmos ~4 anos do passado (5 anos de dados,
+    o primeiro serve de aquecimento para a MMA 200 e os suportes)."""
+    todos = motor.baixar_universo(universo, "5y")
+    crit = motor.CRITERIOS
+    prep = carteira_v2.preparar(todos, crit["janela_pivo"], crit["tolerancia"])
+    resultados = {}
+    for regras in (carteira_v2.REGRAS_V1, carteira_v2.REGRAS_V2):
+        ops, eventos, periodo = carteira_v2.simular_passado(todos, regras, prep=prep)
+        resultados[regras["nome"]] = {"ops": ops, "periodo": periodo,
+                                      "contagens": {k: len(v) for k, v in eventos.items()}}
+    ultimos = {t: float(d["Close"].iloc[-1]) for t, d in todos.items()}
+    try:
+        ibov = motor.baixar_dados("IBOV", "5y")["Close"]
+        if ibov.index.tz is not None:
+            ibov = ibov.tz_localize(None)
+    except Exception:
+        ibov = None
+    return resultados, ultimos, ibov
+
+
+def estatisticas(ops, ultimos, periodo, ibov):
+    o = numerico(ops)
+    enc = o[o["status"] == "Encerrada"].copy()
+    ab = o[o["status"].isin(["Aberta", "Saída programada"])].copy()
+    ab["atual"] = ab["ativo"].map(ultimos)
+    ab["aberto_rs"] = (ab["quantidade"] * (ab["atual"] - ab["preco_entrada"])
+                       - ab["quantidade"] * ab["preco_entrada"] * carteira_v2.CUSTO / 100)
+    executadas = o[o["status"].isin(["Encerrada", "Aberta", "Saída programada"])].copy()
+    executadas["valor"] = executadas["quantidade"] * executadas["preco_entrada"]
+
+    # Capital máximo usado ao mesmo tempo
+    fim = pd.Timestamp(periodo[1])
+    movimentos = pd.concat([
+        pd.Series(executadas["valor"].values, index=pd.to_datetime(executadas["data_entrada"])),
+        pd.Series(-executadas["valor"].values,
+                  index=pd.to_datetime(executadas["data_saida"], errors="coerce").fillna(fim)
+                  + pd.Timedelta(hours=1)),
+    ]).sort_index()
+    capital_max = float(movimentos.cumsum().max()) if len(movimentos) else 0.0
+
+    rs = enc["resultado_rs"]
+    curva = enc.sort_values("data_saida").groupby("data_saida")["resultado_rs"].sum().cumsum()
+    queda_max = float((curva.cummax().clip(lower=0) - curva).max()) if len(curva) else 0.0
+    realizado = float(rs.sum())
+    aberto = float(ab["aberto_rs"].sum()) if len(ab) else 0.0
+
+    ibov_pct = np.nan
+    if ibov is not None and len(ibov):
+        trecho = ibov[(ibov.index >= pd.Timestamp(periodo[0])) & (ibov.index <= fim)]
+        if len(trecho) > 1:
+            ibov_pct = (trecho.iloc[-1] / trecho.iloc[0] - 1) * 100
+
+    return {
+        "enc": enc, "curva": curva,
+        "Operações encerradas": len(enc),
+        "Acertos": f"{int((rs > 0).sum())} ({br((rs > 0).mean() * 100, 0)}%)" if len(enc) else "—",
+        "Resultado realizado": reais(realizado, True),
+        "Média por operação": fmt_pc(enc["resultado_pct"].mean()),
+        "Ganho médio / perda média": (f"{fmt_pc(enc.loc[rs > 0, 'resultado_pct'].mean())} / "
+                                      f"{fmt_pc(enc.loc[rs <= 0, 'resultado_pct'].mean())}"),
+        "Maior queda acumulada": reais(-queda_max) if queda_max else "—",
+        "Capital máximo usado ao mesmo tempo": reais(capital_max),
+        "Retorno sobre o capital máximo": fmt_pc((realizado + aberto) / capital_max * 100, 1)
+                                          if capital_max else "—",
+        "Máximo de compras num dia": int(executadas.groupby("data_entrada").size().max())
+                                     if len(executadas) else 0,
+        "Máximo de vendas num mês": int(enc.groupby(enc["data_saida"].str[:7]).size().max())
+                                    if len(enc) else 0,
+        "Vendas no mesmo dia da compra": int((enc["data_saida"] == enc["data_entrada"]).sum()),
+        "Abertas no fim do período": f"{len(ab)} ({reais(aberto, True)} em aberto)",
+        "IBOV no mesmo período": fmt_pc(ibov_pct, 1),
+    }
+
+
+def regras_v2_markdown():
+    return (
+        "- **Entra:** confluência de alta, com 2 ou mais setups **independentes** no mesmo ativo "
+        "em até 3 pregões. Cruzamento MME 9/21 e Cruzamento MACD contam como **um só**.\n"
+        "- **Compra:** R$ 1.000 fictícios em quantidade inteira de ações (calculada pelo "
+        "fechamento do dia do sinal), na **abertura do pregão seguinte**.\n"
+        "- **Limites:** no máximo **3 compras por dia** e **20 vendas por mês**. Uma nova compra só "
+        "entra se as vendas já feitas no mês mais as operações em aberto somarem menos de 20, "
+        "o que garante o limite mesmo que todas sejam vendidas no mês. Com mais sinais do que "
+        "vagas, entram os de maior força e, no empate, os de melhor relação alvo/risco.\n"
+        "- **Stop:** o suporte mais alto a pelo menos **1,5x o ATR** de 14 dias abaixo do preço. "
+        "Se ele estiver a mais de **3x o ATR** ou a mais de **8%** do preço, a operação não entra.\n"
+        "- **Alvo:** a primeira resistência a pelo menos 2x o risco; sem resistência, 2x o risco.\n"
+        "- **Sem venda no dia da compra:** se o stop ou o alvo for atingido no próprio dia, a "
+        "venda acontece na **abertura do pregão seguinte**.\n"
+        "- **Gap**, **stop e alvo no mesmo dia** e **custos (0,10%)**: como na versão 1. "
+        "Proventos não são considerados.")
+
+
+def pagina_carteira_v2():
+    st.title("💼 Carteira Simulada: versão 2")
+    st.write("Novas regras de risco, rodando em paralelo com a versão 1. As ordens de cada "
+             "pregão também chegam prontas no e-mail.")
+    with st.expander("Regras da versão 2"):
+        st.markdown(regras_v2_markdown())
+
+    aba_viva, aba_passado = st.tabs(["Ao vivo", "Teste no passado"])
+
+    with aba_viva:
+        arq_ops = os.path.join(PASTA_V2, "operacoes.csv")
+        arq_estado = os.path.join(PASTA_V2, "estado.json")
+        estado = {}
+        if os.path.exists(arq_estado):
+            with open(arq_estado, encoding="utf-8") as f:
+                estado = json.load(f)
+        ops = pd.read_csv(arq_ops, dtype=str, keep_default_na=False) if os.path.exists(arq_ops) \
+            else pd.DataFrame(columns=carteira_v2.COLUNAS)
+        inicio = pd.Timestamp(estado.get("inicio", carteira_v2.DATA_INICIO))
+        if ops.empty:
+            st.info(f"A versão 2 começa com os sinais do pregão de {inicio:%d/%m/%Y}. As primeiras "
+                    "ordens aparecem aqui e no e-mail depois que o robô processar esse dia, e "
+                    "as compras acontecem na abertura do pregão seguinte.")
+        else:
+            st.caption(f"Último pregão processado: "
+                       f"{pd.Timestamp(estado.get('ultimo_dia')):%d/%m/%Y} | "
+                       f"atualizado em {estado.get('atualizado_em', '—')}")
+            o = numerico(ops)
+            vivas = o[o["status"].isin(["Aberta", "Saída programada"])].copy()
+            if len(vivas):
+                with st.spinner("Atualizando preços..."):
+                    todos_vivos = baixar_universo(tuple(sorted(vivas["ativo"].unique())))
+                vivas["atual"] = vivas["ativo"].map(
+                    lambda t: todos_vivos[t]["Close"].iloc[-1] if t in todos_vivos else np.nan)
+                vivas["aberto_rs"] = vivas["quantidade"] * (vivas["atual"] - vivas["preco_entrada"])
+            enc = o[o["status"] == "Encerrada"]
+            mes = pd.Timestamp.now(tz="America/Sao_Paulo").strftime("%Y-%m")
+            vendas_mes = int((enc["data_saida"].str[:7] == mes).sum())
+            em_aberto = int(o["status"].isin(carteira_v2.VIVAS).sum())
+            realizado = enc["resultado_rs"].sum()
+            aberto = vivas["aberto_rs"].sum() if len(vivas) else 0.0
+            c1, c2, c3, c4 = st.columns(4)
+            c1.metric("Resultado total", reais(realizado + aberto, True),
+                      f"realizado {reais(realizado, True)}", delta_color="off")
+            c2.metric("Encerradas", len(enc),
+                      f"{br((enc['resultado_rs'] > 0).mean() * 100, 0)}% de acerto" if len(enc) else None,
+                      delta_color="off")
+            c3.metric("Em carteira ou na fila", em_aberto)
+            c4.metric("Vendas no mês", f"{vendas_mes} de 20",
+                      f"{max(0, 20 - vendas_mes - em_aberto)} vagas para novas compras",
+                      delta_color="off")
+
+            pend = o[o["status"] == "Pendente"]
+            if len(pend):
+                st.subheader("🟢 Comprar na abertura do próximo pregão")
+                st.dataframe(pd.DataFrame({
+                    "Ativo": pend["ativo"], "Quantidade": pend["quantidade"].astype("Int64"),
+                    "Preço de referência": pend["preco_ref"].map(reais),
+                    "Stop previsto": pend["stop_previsto"].map(reais),
+                    "Alvo previsto": pend["alvo_previsto"].map(reais),
+                    "Força": pend["forca"].astype("Int64"), "Setups": pend["setups"],
+                }), hide_index=True)
+                st.caption("Stop e alvo definitivos são recalculados pelo preço de abertura e "
+                           "chegam no e-mail seguinte, para cadastrar a partir do dia após a compra.")
+            prog = o[o["status"] == "Saída programada"]
+            if len(prog):
+                st.subheader("🔴 Vender na abertura do próximo pregão")
+                st.dataframe(pd.DataFrame({
+                    "Ativo": prog["ativo"], "Quantidade": prog["quantidade"].astype("Int64"),
+                    "Compra": prog["preco_entrada"].map(reais), "Motivo": prog["motivo_saida"],
+                }), hide_index=True)
+            abertas = vivas[vivas["status"] == "Aberta"] if len(vivas) else vivas
+            if len(abertas):
+                st.subheader("🛡️ Operações abertas (stop e alvo cadastrados)")
+                st.dataframe(pd.DataFrame({
+                    "Ativo": abertas["ativo"], "Quantidade": abertas["quantidade"].astype("Int64"),
+                    "Compra em": fmt_data(abertas["data_entrada"]),
+                    "Preço de compra": abertas["preco_entrada"].map(reais),
+                    "Preço atual": abertas["atual"].map(reais),
+                    "Stop": abertas["stop"].map(reais), "Alvo": abertas["alvo"].map(reais),
+                    "Resultado": abertas["aberto_rs"].map(lambda v: reais(v, True)),
+                }), hide_index=True)
+            if len(enc):
+                st.subheader("Operações encerradas")
+                e = enc.sort_values("data_saida", ascending=False)
+                st.dataframe(pd.DataFrame({
+                    "Ativo": e["ativo"], "Setups": e["setups"],
+                    "Compra": fmt_data(e["data_entrada"]), "Venda": fmt_data(e["data_saida"]),
+                    "Preço de compra": e["preco_entrada"].map(reais),
+                    "Preço de venda": e["preco_saida"].map(reais), "Motivo": e["motivo_saida"],
+                    "Resultado": e["resultado_pct"].map(fmt_pc),
+                    "R$": e["resultado_rs"].map(lambda v: reais(v, True)),
+                }), hide_index=True)
+            canc = o[o["status"] == "Cancelada"]
+            if len(canc):
+                with st.expander(f"Ordens canceladas na abertura ({len(canc)})"):
+                    st.dataframe(pd.DataFrame({"Ativo": canc["ativo"],
+                                               "Sinal em": fmt_data(canc["data_sinal"]),
+                                               "Motivo": canc["motivo_saida"]}), hide_index=True)
+
+            # Lado a lado com a versão 1, desde o início da versão 2
+            arq_v1 = os.path.join(PASTA_CARTEIRA, "operacoes.csv")
+            if os.path.exists(arq_v1):
+                v1ops = pd.read_csv(arq_v1)
+                v1ops = v1ops[(v1ops["data_sinal"] >= inicio.strftime("%Y-%m-%d"))
+                              & (v1ops["status"] == "Encerrada")]
+                linhas = []
+                for nome, g in (("Versão 1", v1ops), ("Versão 2", enc)):
+                    r = pd.to_numeric(g["resultado_rs"], errors="coerce")
+                    linhas.append({"Versão": nome, "Encerradas": len(g),
+                                   "Acerto": f"{br((r > 0).mean() * 100, 0)}%" if len(g) else "—",
+                                   "Resultado realizado": reais(r.sum(), True)})
+                st.write(f"**Lado a lado desde {inicio:%d/%m/%Y}** (sinais a partir dessa data)")
+                st.dataframe(pd.DataFrame(linhas), hide_index=True)
+
+    with aba_passado:
+        st.write("As versões 1 e 2 rodam, dia a dia, sobre os últimos anos do Ibovespa e dos "
+                 "ETFs, cada dia vendo só os dados disponíveis até ele. É a forma de saber se as "
+                 "novas regras ajudam sem esperar mais um mês.")
+        if st.button("Rodar o teste no passado (leva cerca de um minuto na primeira vez)",
+                     key="rodar_passado_v2"):
+            st.session_state["passado_v2"] = True
+        if not st.session_state.get("passado_v2"):
+            return
+        with st.spinner("Baixando 5 anos de dados e simulando as duas versões..."):
+            resultados, ultimos, ibov = teste_no_passado(tuple(motor.UNIVERSO_PADRAO))
+        stats = {nome: estatisticas(r["ops"], ultimos, r["periodo"], ibov)
+                 for nome, r in resultados.items()}
+        a, b = resultados["Versão 2"]["periodo"]
+        st.caption(f"Período testado: {a:%d/%m/%Y} a {b:%d/%m/%Y}.")
+        linhas = [k for k in stats["Versão 2"] if k not in ("enc", "curva")]
+        st.dataframe(pd.DataFrame({"Indicador": linhas,
+                                   "Versão 1": [str(stats["Versão 1"][k]) for k in linhas],
+                                   "Versão 2": [str(stats["Versão 2"][k]) for k in linhas]}),
+                     hide_index=True)
+
+        fig = go.Figure()
+        for nome, cor in (("Versão 1", "#8b93a3"), ("Versão 2", "#26a69a")):
+            curva = stats[nome]["curva"]
+            fig.add_trace(go.Scatter(x=pd.to_datetime(curva.index), y=curva.values, name=nome,
+                                     line=dict(color=cor, width=2),
+                                     hovertemplate="R$ %{y:,.2f}<extra>" + nome + "</extra>"))
+        fig.add_hline(y=0, line_color="gray")
+        fig.update_layout(template="plotly_dark", paper_bgcolor=FUNDO, plot_bgcolor=FUNDO,
+                          title="Resultado realizado acumulado (R$)", height=380,
+                          separators=",.", margin=dict(t=50, b=20, l=10, r=10), dragmode=False,
+                          legend=dict(orientation="h", y=1.08, x=0))
+        fig.update_xaxes(fixedrange=True, hoverformat="%d/%m/%Y")
+        fig.update_yaxes(fixedrange=True)
+        st.plotly_chart(fig, key="curva_passado_v2", config=config_grafico())
+
+        st.write("**Por ano** (pelo ano da venda)")
+        anos = []
+        for nome in ("Versão 1", "Versão 2"):
+            e = stats[nome]["enc"]
+            for ano, g in e.groupby(e["data_saida"].str[:4]):
+                r = g["resultado_rs"]
+                anos.append({"Ano": ano, "Versão": nome, "Encerradas": len(g),
+                             "Acerto": f"{br((r > 0).mean() * 100, 0)}%",
+                             "Resultado": reais(r.sum(), True),
+                             "Média por operação": fmt_pc(g["resultado_pct"].mean())})
+        st.dataframe(pd.DataFrame(anos).sort_values(["Ano", "Versão"]), hide_index=True)
+
+        e2 = stats["Versão 2"]["enc"]
+        if len(e2):
+            st.write("**Versão 2: por força da confluência**")
+            forca = []
+            for f, g in e2.groupby(e2["forca"].clip(upper=3)):
+                r = g["resultado_rs"]
+                forca.append({"Força": "3 ou mais setups" if f >= 3 else "2 setups",
+                              "Encerradas": len(g), "Acerto": f"{br((r > 0).mean() * 100, 0)}%",
+                              "Resultado": reais(r.sum(), True),
+                              "Média por operação": fmt_pc(g["resultado_pct"].mean())})
+            st.dataframe(pd.DataFrame(forca), hide_index=True)
+            cont = resultados["Versão 2"]["contagens"]
+            st.caption(f"Sinais que não viraram ordem na versão 2: {cont['fora_do_limite']} pelos "
+                       f"limites de 3/dia ou 20/mês e {cont['sem_stop_valido']} sem stop dentro "
+                       f"da faixa de 1,5x a 3x o ATR. Ordens canceladas na abertura (gap): "
+                       f"{cont['canceladas']}.")
+            with st.expander("Operações da versão 2 no passado"):
+                e = e2.sort_values("data_saida", ascending=False).head(400)
+                st.dataframe(pd.DataFrame({
+                    "Ativo": e["ativo"], "Setups": e["setups"],
+                    "Compra": fmt_data(e["data_entrada"]), "Venda": fmt_data(e["data_saida"]),
+                    "Preço de compra": e["preco_entrada"].map(reais),
+                    "Preço de venda": e["preco_saida"].map(reais), "Motivo": e["motivo_saida"],
+                    "Resultado": e["resultado_pct"].map(fmt_pc),
+                    "R$": e["resultado_rs"].map(lambda v: reais(v, True)),
+                }), hide_index=True)
+
+        with st.expander("Limitações deste teste"):
+            st.markdown(
+                "- **Viés de sobrevivência:** usamos as ações que estão no Ibovespa hoje. As que "
+                "caíram tanto que saíram do índice ficam de fora, o que melhora o resultado.\n"
+                "- **Preços ajustados:** o Yahoo ajusta o histórico por proventos. Os níveis de "
+                "preço do passado ficam um pouco abaixo dos reais, mas as variações são as mesmas.\n"
+                "- **Execução ideal:** compras e vendas pelo preço exato da abertura, do stop ou do "
+                "alvo. Na vida real, ordens de stop podem sair a um preço pior em dias agitados.\n"
+                "- **Custos:** 0,10% por operação; impostos não são descontados.\n"
+                "- **Passado não garante futuro:** use o teste para comparar regras, não para "
+                "prometer um retorno.")
+
+
 # ============ INTERFACE ============
 with st.sidebar:
     pagina = st.radio("Página", ["📈 Gráficos", "🛰️ Sentinela", "🧪 Historiador",
-                                 "💼 Carteira Simulada"])
+                                 "💼 Carteira v2", "💼 Carteira v1"])
     st.divider()
     st.header("Configurações")
 
@@ -875,7 +1200,7 @@ with st.sidebar:
         periodo_visivel = st.selectbox("Período inicial do gráfico", list(JANELAS_VISIVEIS), index=2,
                                        help="6 meses é o padrão. Os períodos longos baixam mais "
                                             "dados e podem demorar um pouco mais.")
-    elif pagina != "💼 Carteira Simulada":
+    elif not pagina.startswith("💼"):
         with st.expander("Universo de ativos"):
             texto_universo = st.text_area("Códigos analisados (edite à vontade)",
                                           " ".join(UNIVERSO_PADRAO), height=160)
@@ -896,5 +1221,7 @@ elif pagina == "🛰️ Sentinela":
     pagina_sentinela(universo, janela_pivo, tolerancia, max_niveis)
 elif pagina == "🧪 Historiador":
     pagina_historiador(universo, janela_pivo, tolerancia)
+elif pagina == "💼 Carteira v2":
+    pagina_carteira_v2()
 else:
     pagina_carteira()

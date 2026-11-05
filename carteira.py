@@ -199,7 +199,8 @@ def main():
     else:
         print(f"Nenhum pregão novo a processar (início do simulado: {estado['inicio']}).")
 
-    estado["eventos_do_dia"] = eventos
+    if dias and estado.get("ultimo_dia") != ultimo.strftime("%Y-%m-%d"):
+        estado["eventos_do_dia"] = eventos   # só troca o resumo quando um pregão novo foi processado
     estado["atualizado_em"] = pd.Timestamp.now(tz="America/Sao_Paulo").strftime("%d/%m/%Y %H:%M")
     salvar(ops, estado)
     print(f"Compras executadas: {eventos['compradas']}")

@@ -68,6 +68,11 @@ def adicionar_indicadores(dados):
                      - dados["Close"].ewm(span=26, adjust=False).mean())
     dados["MACD_Sinal"] = dados["MACD"].ewm(span=9, adjust=False).mean()
     dados["MACD_Hist"] = dados["MACD"] - dados["MACD_Sinal"]
+    # ATR de 14 dias (Wilder): quanto o ativo costuma oscilar por dia, em reais
+    fech_ant = dados["Close"].shift(1)
+    faixa = pd.concat([dados["High"] - dados["Low"], (dados["High"] - fech_ant).abs(),
+                       (dados["Low"] - fech_ant).abs()], axis=1).max(axis=1)
+    dados["ATR14"] = faixa.ewm(alpha=1/14, adjust=False).mean()
     return dados
 
 

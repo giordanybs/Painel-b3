@@ -1,5 +1,8 @@
-"""Alerta diário: roda a Sentinela, consulta o Historiador e envia por e-mail
-os sinais de hoje que foram bem avaliados no último ano.
+"""Alerta diário: roda a Sentinela, consulta o Historiador e envia por e-mail as ordens da
+Carteira v2 (semiautomação) e os sinais do último pregão.
+
+Roda de madrugada, depois que o Yahoo fecha os candles do dia anterior, e envia um único
+e-mail por pregão (a segunda execução da madrugada só envia se a primeira não conseguiu).
 
 Executado automaticamente pelo GitHub Actions (arquivo .github/workflows/alerta.yml).
 As credenciais vêm dos "Secrets" do repositório, nunca ficam escritas no código.
@@ -16,6 +19,7 @@ from email.mime.multipart import MIMEMultipart
 
 import pandas as pd
 import motor
+import carteira as v1
 
 # True: envia um resumo todo dia de pregão, mesmo sem sinais aprovados.
 # False: só envia quando houver pelo menos um sinal aprovado.
@@ -76,8 +80,138 @@ def outros_sinais_html(outros):
         </table>"""
 
 
+PASTA_CARTEIRA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "carteira")
+ARQ_ALERTA = os.path.join(PASTA_CARTEIRA, "alerta_estado.json")
+SP = ZoneInfo("America/Sao_Paulo")
+TD = "padding:6px 10px;border-bottom:1px solid #eee"
+TH = "padding:6px 10px;text-align:left"
+
+
+def tabela_html(cabecalho, linhas):
+    cab = "".join(f"<th style='{TH}'>{c}</th>" for c in cabecalho)
+    corpo = "".join("<tr>" + "".join(f"<td style='{TD}'>{c}</td>" for c in l) + "</tr>"
+                    for l in linhas)
+    return (f"<table style='border-collapse:collapse;font-size:14px;margin:6px 0 4px'>"
+            f"<tr style='background:#f3f4f6'>{cab}</tr>{corpo}</table>")
+
+
+def reais(v):
+    v = pd.to_numeric(v, errors="coerce")
+    return "—" if pd.isna(v) else f"R$ {motor.br(v)}"
+
+
+def quantidade_html(ativo, qtd):
+    """Ações: lote padrão de 100 + mercado fracionário (código com F). ETFs: código direto."""
+    qtd = int(float(qtd))
+    if ativo in motor.ETFS.split():
+        return f"<b>{qtd}</b> × {ativo}"
+    lote, fracao = divmod(qtd, 100)
+    partes = []
+    if lote:
+        partes.append(f"<b>{lote * 100}</b> × {ativo}")
+    if fracao:
+        partes.append(f"<b>{fracao}</b> × {ativo}F")
+    return " + ".join(partes)
+
+
+def secao_ordens_v2_html():
+    """Semiautomação: as ordens da Carteira v2 prontas para cadastrar na corretora."""
+    pasta = os.path.join(PASTA_CARTEIRA, "v2")
+    try:
+        with open(os.path.join(pasta, "estado.json"), encoding="utf-8") as f:
+            estado = json.load(f)
+        ops = pd.read_csv(os.path.join(pasta, "operacoes.csv"), dtype=str, keep_default_na=False)
+    except Exception:
+        return "", {}
+    if not estado.get("ultimo_dia"):
+        return (f"<h3 style='margin:8px 0 4px'>📋 Ordens da Carteira v2</h3><p>A versão 2 começa "
+                f"com os sinais do pregão de {pd.Timestamp(estado.get('inicio')):%d/%m/%Y}.</p>"), {}
+
+    ultimo = pd.Timestamp(estado["ultimo_dia"])
+    proximo = ultimo + pd.offsets.BDay(1)
+    agora = datetime.now(SP)
+    aviso = ""
+    if agora.date() > proximo.date():
+        aviso = (f"<p style='background:#fdecea;color:#b71c1c;padding:8px 12px;border-radius:6px'>"
+                 f"<b>⚠️ Atenção:</b> estas ordens foram geradas com o pregão de {ultimo:%d/%m} e "
+                 f"eram para {proximo:%d/%m}, que já passou. Não as execute, a menos que "
+                 f"{proximo:%d/%m} tenha sido feriado na B3.</p>")
+    elif agora.date() == proximo.date() and agora.hour >= 10:
+        aviso = ("<p style='background:#fff4e5;color:#8a5300;padding:8px 12px;border-radius:6px'>"
+                 "<b>⚠️ O pregão de hoje já abriu.</b> O simulado usa o preço de abertura; "
+                 "avalie se ainda faz sentido executar as ordens agora.</p>")
+
+    pend = ops[ops["status"] == "Pendente"]
+    prog = ops[ops["status"] == "Saída programada"]
+    abertas = ops[ops["status"] == "Aberta"]
+    novas = abertas[abertas["data_entrada"] == estado["ultimo_dia"]]
+    antigas = abertas[abertas["data_entrada"] != estado["ultimo_dia"]]
+    ev = estado.get("eventos", {})
+    enc_dia = [e for e in ev.get("encerradas", []) if e.get("dia") == estado["ultimo_dia"]]
+    mes = proximo.strftime("%Y-%m")
+    vendas_mes = int(((ops["status"] == "Encerrada") & (ops["data_saida"].str[:7] == mes)).sum())
+
+    partes = [f"<h3 style='margin:8px 0 2px'>📋 Ordens para o pregão de {proximo:%d/%m} "
+              f"(Carteira v2)</h3>",
+              f"<p style='color:#666;margin-top:0'>Geradas com o fechamento de {ultimo:%d/%m}. "
+              f"Vendas em {proximo:%m/%Y}: {vendas_mes} de 20.</p>", aviso]
+
+    if len(pend):
+        partes.append("<p style='margin:14px 0 2px'><b>🟢 Comprar na abertura</b> "
+                      "(ordem a mercado, enviada antes das 10h)</p>")
+        partes.append(tabela_html(
+            ["Ativo", "Quantidade", "Preço de referência", "Stop previsto", "Alvo previsto", "Setups"],
+            [[f"<b>{r['ativo']}</b>", quantidade_html(r["ativo"], r["quantidade"]),
+              reais(r["preco_ref"]), reais(r["stop_previsto"]), reais(r["alvo_previsto"]),
+              f"<span style='color:#666;font-size:12px'>{r['setups']}</span>"]
+             for _, r in pend.iterrows()]))
+        partes.append("<p style='color:#666;font-size:12px;margin-top:0'>O stop e o alvo "
+                      "definitivos são calculados pelo preço de abertura e vêm no próximo e-mail. "
+                      "Não cadastre stop no dia da compra: a regra é não vender no mesmo dia.</p>")
+    if len(prog):
+        partes.append("<p style='margin:14px 0 2px'><b>🔴 Vender na abertura</b> "
+                      "(ordem a mercado, enviada antes das 10h)</p>")
+        partes.append(tabela_html(
+            ["Ativo", "Quantidade", "Preço de compra", "Motivo"],
+            [[f"<b>{r['ativo']}</b>", quantidade_html(r["ativo"], r["quantidade"]),
+              reais(r["preco_entrada"]), r["motivo_saida"]] for _, r in prog.iterrows()]))
+    if len(novas):
+        partes.append("<p style='margin:14px 0 2px'><b>🛡️ Cadastrar hoje: stop e alvo das compras "
+                      "de ontem</b> (ordem de stop e ordem de venda no alvo, ou uma ordem OCO / "
+                      "stop duplo, se a plataforma oferecer)</p>")
+        partes.append(tabela_html(
+            ["Ativo", "Quantidade", "Preço de compra", "Stop", "Alvo"],
+            [[f"<b>{r['ativo']}</b>", quantidade_html(r["ativo"], r["quantidade"]),
+              reais(r["preco_entrada"]), f"<b>{reais(r['stop'])}</b>", f"<b>{reais(r['alvo'])}</b>"]
+             for _, r in novas.iterrows()]))
+    if len(antigas):
+        lista = ", ".join(f"{r['ativo']} (stop {reais(r['stop'])}, alvo {reais(r['alvo'])})"
+                          for _, r in antigas.iterrows())
+        partes.append(f"<p style='margin:14px 0 2px'><b>Manter cadastrados:</b> {lista}</p>")
+    if enc_dia:
+        itens = "".join(
+            f"<li><b>{e['ativo']}</b>: {e['motivo']}, "
+            f"<span style='color:{'#1a7f37' if e['resultado_rs'] > 0 else '#c62828'}'>"
+            f"{formatar(e['resultado_pct'], 2, '%', True)} (R$ {motor.br(e['resultado_rs'])})</span></li>"
+            for e in enc_dia)
+        partes.append(f"<p style='margin:14px 0 2px'><b>Encerradas em {ultimo:%d/%m}</b> "
+                      f"(se o stop ou o alvo estava cadastrado, a corretora já executou)</p>"
+                      f"<ul style='margin:0;padding-left:20px'>{itens}</ul>")
+    if not (len(pend) or len(prog) or len(novas)):
+        partes.append("<p><b>Nenhuma ordem nova para cadastrar.</b></p>")
+    fora = ev.get("fora_do_limite", []) + ev.get("sem_stop_valido", [])
+    if fora:
+        resumo = "; ".join(f"{f['ativo']} ({f['motivo'].lower()})" for f in fora[:10])
+        partes.append(f"<p style='color:#666;font-size:12px'>Sinais que não viraram ordem: {resumo}.</p>")
+    partes.append("<p style='color:#666;font-size:12px'>Quantidades para R$ 1.000 pelo preço de "
+                  "referência. Ações fora de múltiplos de 100 vão para o mercado fracionário "
+                  "(código com F); para ETFs, confira o lote na plataforma.</p>")
+    contagem = {"compras": len(pend), "vendas": len(prog), "proximo": proximo}
+    return "".join(partes), contagem
+
+
 def secao_carteira_html():
-    """Resumo do dia da Carteira Simulada (gerado pelo carteira.py, que roda antes)."""
+    """Resumo do dia da Carteira Simulada v1 (gerado pelo carteira.py, que roda antes)."""
     pasta = os.path.join(os.path.dirname(os.path.abspath(__file__)), "carteira")
     try:
         with open(os.path.join(pasta, "estado.json"), encoding="utf-8") as f:
@@ -104,13 +238,13 @@ def secao_carteira_html():
     abertas = (ops["status"] == "Aberta").sum()
     lista = "".join(f"<li style='margin-bottom:4px'>{i}</li>" for i in itens)
     return f"""
-        <h3 style="margin:28px 0 6px">💼 Carteira Simulada</h3>
+        <h3 style="margin:28px 0 6px">💼 Carteira Simulada v1 (comparação)</h3>
         <ul style="margin:0;padding-left:20px">{lista}</ul>
         <p style="color:#666;font-size:13px">{len(enc)} operações encerradas, resultado realizado de
         R$ {motor.br(total)}. {abertas} operação(ões) aberta(s).</p>"""
 
 
-def montar_email(aprovados, outros, todos, data_pregao, crit):
+def montar_email(aprovados, outros, todos, data_pregao, crit, ordens_html=""):
     secao_outros = f"""
         <h3 style="margin:28px 0 6px">Outros sinais de hoje (não aprovados)</h3>
         <p style="color:#666;font-size:13px;margin-top:0">Apareceram na Sentinela, mas não
@@ -146,8 +280,10 @@ def montar_email(aprovados, outros, todos, data_pregao, crit):
 
     return f"""
     <div style="font-family:Arial,sans-serif;color:#222;max-width:760px;line-height:1.45">
-      <h2 style="margin-bottom:4px">🛰️ Sentinela: sinais bem avaliados</h2>
+      <h2 style="margin-bottom:4px">🛰️ Sentinela</h2>
       <p style="color:#666;margin-top:0">Pregão de {data_pregao.strftime('%d/%m/%Y')}</p>
+      {ordens_html}
+      <h3 style="margin:28px 0 6px">Sinais bem avaliados pelo Historiador</h3>
       {corpo}
       {secao_carteira_html()}
       <p style="color:#666;font-size:12px;margin-top:24px">
@@ -177,6 +313,23 @@ def enviar(assunto, html):
         smtp.sendmail(usuario, destino.split(","), mensagem.as_string())
 
 
+def dia_de_referencia(todos):
+    """Último pregão com os candles completos na maioria dos ativos."""
+    datas = sorted({x for d in todos.values() for x in d.index}, reverse=True)
+    for dia in datas[:6]:
+        if v1.dia_completo(todos, dia):
+            return dia
+    return None
+
+
+def ler_estado_alerta():
+    try:
+        with open(ARQ_ALERTA, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
 def main():
     crit = motor.CRITERIOS
     forcar = os.environ.get("FORCAR_ENVIO", "false").lower() == "true"
@@ -187,13 +340,17 @@ def main():
         print("Não foi possível baixar os dados.")
         sys.exit(1)
 
-    ultima = max(df.index[-1] for df in todos.values())
-    hoje_brasil = datetime.now(ZoneInfo("America/Sao_Paulo")).date()
-    if ultima.date() != hoje_brasil and not forcar:
-        print(f"Último pregão nos dados: {ultima.date()}. Hoje não houve pregão (feriado?).")
+    dia_ref = dia_de_referencia(todos)
+    if dia_ref is None:
+        print("Nenhum pregão recente com candles completos. Tento na próxima execução.")
+        return
+    todos = {t: d.loc[:dia_ref] for t, d in todos.items() if len(d.loc[:dia_ref]) >= 30}
+    estado_alerta = ler_estado_alerta()
+    if not forcar and estado_alerta.get("ultimo_pregao_enviado", "") >= dia_ref.strftime("%Y-%m-%d"):
+        print(f"O e-mail do pregão de {dia_ref:%d/%m/%Y} já foi enviado.")
         return
 
-    print(f"{len(todos)} ativos. Rodando o Historiador...")
+    print(f"Pregão de referência: {dia_ref:%d/%m/%Y}. {len(todos)} ativos. Rodando o Historiador...")
     sinais, base = motor.backtest(todos, crit["janela_pivo"], crit["tolerancia"], crit["horizonte"])
     resumo_ind = motor.resumir(sinais, base)
     resumo_comb = motor.resumir(motor.combinar(sinais, crit["janela_combinacao"]), base)
@@ -202,22 +359,27 @@ def main():
         todos, resumo_ind, resumo_comb, crit["janela_pivo"], crit["tolerancia"], crit))
     aprovados = hoje[hoje["Aprovado"]].sort_values("Vantagem", ascending=False)
     outros = hoje[~hoje["Aprovado"]]
-    print(f"{len(hoje)} sinais hoje, {len(aprovados)} bem avaliados.")
+    print(f"{len(hoje)} sinais, {len(aprovados)} bem avaliados.")
     for _, r in hoje.iterrows():   # registro completo no log do GitHub Actions
         print(f"  {r['Ativo']:7} {r['Direção']} {r['Setup']}: {r['Motivo']}")
 
-    if aprovados.empty and not (forcar or ENVIAR_RESUMO_DIARIO):
-        print("Nada para enviar hoje.")
+    ordens_html, contagem = secao_ordens_v2_html()
+    tem_ordens = bool(contagem.get("compras") or contagem.get("vendas"))
+    if aprovados.empty and not (forcar or ENVIAR_RESUMO_DIARIO or tem_ordens):
+        print("Nada para enviar.")
         return
 
-    if aprovados.empty:
-        assunto = (f"🛰️ Sentinela {ultima.strftime('%d/%m')}: nenhum sinal aprovado "
-                   f"({len(hoje)} observados)")
+    if contagem:
+        assunto = (f"🛰️ Ordens para {contagem['proximo']:%d/%m}: {contagem['compras']} compra(s), "
+                   f"{contagem['vendas']} venda(s) | {len(aprovados)} sinal(is) aprovado(s)")
     else:
-        assunto = (f"🛰️ Sentinela {ultima.strftime('%d/%m')}: "
-                   f"{len(aprovados)} sinal(is) bem avaliado(s)")
-    enviar(assunto, montar_email(aprovados, outros, todos, ultima, crit))
+        assunto = f"🛰️ Sentinela {dia_ref:%d/%m}: {len(aprovados)} sinal(is) aprovado(s)"
+    enviar(assunto, montar_email(aprovados, outros, todos, dia_ref, crit, ordens_html))
     print("E-mail enviado.")
+    estado_alerta["ultimo_pregao_enviado"] = dia_ref.strftime("%Y-%m-%d")
+    os.makedirs(PASTA_CARTEIRA, exist_ok=True)
+    with open(ARQ_ALERTA, "w", encoding="utf-8") as f:
+        json.dump(estado_alerta, f, ensure_ascii=False, indent=2)
 
 
 if __name__ == "__main__":
