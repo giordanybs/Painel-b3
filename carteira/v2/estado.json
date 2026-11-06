@@ -1,0 +1,20 @@
+{
+  "inicio": "2026-11-05",
+  "ultimo_dia": "2026-11-05",
+  "eventos": {
+    "compradas": [],
+    "encerradas": [],
+    "programadas": [],
+    "novas_ordens": [],
+    "fora_do_limite": [],
+    "sem_stop_valido": [
+      {
+        "ativo": "CMIN3",
+        "setups": "Cruzamento MACD + Divergência no MACD + Rompimento de resistência",
+        "motivo": "Stop longe demais (10,8% abaixo; o máximo é 3x o ATR e 8%)"
+      }
+    ],
+    "canceladas": []
+  },
+  "atualizado_em": "06/11/2026 09:51"
+}
