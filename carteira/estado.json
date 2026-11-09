@@ -2,44 +2,40 @@
   "inicio": "2026-10-05",
   "eventos_do_dia": {
     "compradas": [
-      "RAIZ4",
-      "WEGE3",
-      "GOLD11",
       "CMIN3"
     ],
     "encerradas": [
       {
-        "ativo": "IVVB11",
+        "ativo": "UGPA3",
         "motivo": "Stop",
-        "resultado_pct": -1.8,
-        "resultado_rs": -18.04
-      },
-      {
-        "ativo": "GOAU4",
-        "motivo": "Stop",
-        "resultado_pct": -3.88,
-        "resultado_rs": -38.77
+        "resultado_pct": -5.64,
+        "resultado_rs": -56.38
       },
       {
         "ativo": "CMIN3",
         "motivo": "Stop",
-        "resultado_pct": -3.55,
-        "resultado_rs": -35.55
+        "resultado_pct": -0.91,
+        "resultado_rs": -9.13
       }
     ],
     "novos_sinais": [
       {
-        "ativo": "CMIN3",
-        "setups": "Cruzamento MACD + Rompimento de resistência",
+        "ativo": "PETR3",
+        "setups": "IFR sobrevendido em tendência de alta + Testando suporte",
         "bem_avaliado": true
       },
       {
-        "ativo": "CMIN3",
-        "setups": "Cruzamento MACD + Divergência no MACD + Rompimento de resistência",
+        "ativo": "PETR4",
+        "setups": "IFR sobrevendido em tendência de alta + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "UGPA3",
+        "setups": "IFR sobrevendido em tendência de alta + Testando suporte",
         "bem_avaliado": true
       }
     ]
   },
-  "atualizado_em": "06/11/2026 09:51",
-  "ultimo_dia": "2026-11-05"
+  "atualizado_em": "09/11/2026 09:19",
+  "ultimo_dia": "2026-11-06"
 }
