@@ -1,3 +1,3 @@
 id,ativo,setups,forca,data_sinal,preco_ref,quantidade,stop_previsto,alvo_previsto,atr,status,data_entrada,preco_entrada,stop,alvo,tipo_alvo,risco_pct,data_saida,preco_saida,motivo_saida,resultado_pct,resultado_rs,niveis
-2026-11-06-UGPA3,UGPA3,IFR sobrevendido em tendência de alta + Testando suporte,2,2026-11-06,29.77,33,27.42,40.54,1.3208,Pendente,,,,,,,,,,,,"[19.66, 22.02, 24.72, 27.42, 29.68, 32.43, 40.54]"
-2026-11-06-PETR4,PETR4,IFR sobrevendido em tendência de alta + Testando suporte,2,2026-11-06,45.3,22,41.78,52.34,2.0233,Pendente,,,,,,,,,,,,"[27.84, 29.11, 30.24, 36.24, 39.5, 41.78, 47.43, 50.47]"
+2026-11-06-UGPA3,UGPA3,IFR sobrevendido em tendência de alta + Testando suporte,2,2026-11-06,29.77,33,27.42,40.54,1.3208,Cancelada,,,,,,,2026-11-09,,"Stop longe demais (8,4% abaixo; o máximo é 3x o ATR e 8%) na abertura",,,"[19.66, 22.02, 24.72, 27.42, 29.68, 32.43, 40.54]"
+2026-11-06-PETR4,PETR4,IFR sobrevendido em tendência de alta + Testando suporte,2,2026-11-06,45.3,22,41.78,52.34,2.0233,Cancelada,,,,,,,2026-11-09,,"Stop longe demais (11,4% abaixo; o máximo é 3x o ATR e 8%) na abertura",,,"[27.84, 29.11, 30.24, 36.24, 39.5, 41.78, 47.43, 50.47]"
