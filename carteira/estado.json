@@ -2,37 +2,31 @@
   "inicio": "2026-10-05",
   "eventos_do_dia": {
     "compradas": [
-      "PETR3",
-      "PETR4",
+      "CMIN3",
       "UGPA3"
     ],
     "encerradas": [
       {
-        "ativo": "HASH11",
-        "motivo": "Stop",
-        "resultado_pct": -4.63,
-        "resultado_rs": -46.34
+        "ativo": "TIMS3",
+        "motivo": "Alvo",
+        "resultado_pct": 14.33,
+        "resultado_rs": 143.28
       },
       {
-        "ativo": "UGPA3",
-        "motivo": "Stop",
-        "resultado_pct": -0.94,
-        "resultado_rs": -9.35
-      }
-    ],
-    "novos_sinais": [
+        "ativo": "EMBJ3",
+        "motivo": "Alvo",
+        "resultado_pct": 18.14,
+        "resultado_rs": 181.44
+      },
       {
         "ativo": "CMIN3",
-        "setups": "Cruzamento MME 9/21 + Divergência no MACD + Rompimento de resistência",
-        "bem_avaliado": true
-      },
-      {
-        "ativo": "UGPA3",
-        "setups": "IFR sobrevendido em tendência de alta + Testando suporte",
-        "bem_avaliado": true
+        "motivo": "Stop",
+        "resultado_pct": -1.41,
+        "resultado_rs": -14.13
       }
-    ]
+    ],
+    "novos_sinais": []
   },
-  "atualizado_em": "10/11/2026 08:14",
-  "ultimo_dia": "2026-11-09"
+  "atualizado_em": "11/11/2026 07:40",
+  "ultimo_dia": "2026-11-10"
 }
