@@ -1,13 +1,39 @@
 {
   "inicio": "2026-11-05",
-  "ultimo_dia": "2026-11-10",
+  "ultimo_dia": "2026-11-11",
   "eventos": {
     "compradas": [],
     "encerradas": [],
     "programadas": [],
-    "novas_ordens": [],
+    "novas_ordens": [
+      {
+        "ativo": "SANB11",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "forca": 2
+      }
+    ],
     "fora_do_limite": [],
     "sem_stop_valido": [
+      {
+        "ativo": "CMIN3",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "motivo": "Stop longe demais (10,4% abaixo; o máximo é 3x o ATR e 8%)"
+      },
+      {
+        "ativo": "GGBR4",
+        "setups": "Cruzamento MACD + Rompimento de resistência",
+        "motivo": "Stop longe demais (12,6% abaixo; o máximo é 3x o ATR e 8%)"
+      },
+      {
+        "ativo": "MBRF3",
+        "setups": "Cruzamento MACD + Rompimento de resistência",
+        "motivo": "Stop longe demais (8,3% abaixo; o máximo é 3x o ATR e 8%)"
+      },
+      {
+        "ativo": "PRIO3",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "motivo": "Stop longe demais (9,6% abaixo; o máximo é 3x o ATR e 8%)"
+      },
       {
         "ativo": "UGPA3",
         "setups": "IFR sobrevendido em tendência de alta + Testando suporte",
@@ -16,5 +42,5 @@
     ],
     "canceladas": []
   },
-  "atualizado_em": "11/11/2026 07:40"
+  "atualizado_em": "12/11/2026 09:52"
 }
