@@ -1,36 +1,41 @@
 {
   "inicio": "2026-10-05",
   "eventos_do_dia": {
-    "compradas": [],
-    "encerradas": [],
-    "novos_sinais": [
+    "compradas": [
+      "CMIN3",
+      "GGBR4",
+      "MBRF3",
+      "PRIO3",
+      "SANB11"
+    ],
+    "encerradas": [
       {
         "ativo": "CMIN3",
-        "setups": "Cruzamento MME 9/21 + Testando suporte",
-        "bem_avaliado": true
-      },
-      {
-        "ativo": "GGBR4",
-        "setups": "Cruzamento MACD + Rompimento de resistência",
-        "bem_avaliado": true
-      },
-      {
-        "ativo": "MBRF3",
-        "setups": "Cruzamento MACD + Rompimento de resistência",
-        "bem_avaliado": true
+        "motivo": "Stop",
+        "resultado_pct": -1.08,
+        "resultado_rs": -10.84
       },
       {
         "ativo": "PRIO3",
-        "setups": "Rompimento de resistência + Testando suporte",
-        "bem_avaliado": false
+        "motivo": "Stop",
+        "resultado_pct": -0.13,
+        "resultado_rs": -1.33
       },
       {
         "ativo": "SANB11",
+        "motivo": "Stop",
+        "resultado_pct": -1.17,
+        "resultado_rs": -11.73
+      }
+    ],
+    "novos_sinais": [
+      {
+        "ativo": "SBSP3",
         "setups": "Cruzamento MACD + Testando suporte",
         "bem_avaliado": true
       }
     ]
   },
-  "atualizado_em": "12/11/2026 09:52",
-  "ultimo_dia": "2026-11-11"
+  "atualizado_em": "13/11/2026 08:58",
+  "ultimo_dia": "2026-11-12"
 }
