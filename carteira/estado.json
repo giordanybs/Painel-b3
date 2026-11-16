@@ -2,40 +2,39 @@
   "inicio": "2026-10-05",
   "eventos_do_dia": {
     "compradas": [
-      "CMIN3",
-      "GGBR4",
-      "MBRF3",
-      "PRIO3",
-      "SANB11"
+      "SBSP3"
     ],
     "encerradas": [
       {
-        "ativo": "CMIN3",
-        "motivo": "Stop",
-        "resultado_pct": -1.08,
-        "resultado_rs": -10.84
-      },
-      {
-        "ativo": "PRIO3",
-        "motivo": "Stop",
-        "resultado_pct": -0.13,
-        "resultado_rs": -1.33
-      },
-      {
-        "ativo": "SANB11",
-        "motivo": "Stop",
-        "resultado_pct": -1.17,
-        "resultado_rs": -11.73
+        "ativo": "UGPA3",
+        "motivo": "Alvo",
+        "resultado_pct": 6.09,
+        "resultado_rs": 60.89
       }
     ],
     "novos_sinais": [
       {
-        "ativo": "SBSP3",
+        "ativo": "AURE3",
         "setups": "Cruzamento MACD + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "RAIL3",
+        "setups": "Cruzamento MACD + Rompimento de resistência",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "SANB11",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "TAEE11",
+        "setups": "Cruzamento MACD + Rompimento de resistência",
         "bem_avaliado": true
       }
     ]
   },
-  "atualizado_em": "13/11/2026 08:58",
-  "ultimo_dia": "2026-11-12"
+  "atualizado_em": "16/11/2026 08:13",
+  "ultimo_dia": "2026-11-13"
 }
