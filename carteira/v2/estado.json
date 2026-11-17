@@ -1,13 +1,25 @@
 {
   "inicio": "2026-11-05",
-  "ultimo_dia": "2026-11-13",
+  "ultimo_dia": "2026-11-16",
   "eventos": {
-    "compradas": [],
+    "compradas": [
+      {
+        "ativo": "TAEE11",
+        "dia": "2026-11-16",
+        "preco": 41.04,
+        "quantidade": 23.0
+      }
+    ],
     "encerradas": [],
     "programadas": [],
     "novas_ordens": [
       {
-        "ativo": "TAEE11",
+        "ativo": "GOLD11",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "forca": 2
+      },
+      {
+        "ativo": "CPFE3",
         "setups": "Cruzamento MACD + Rompimento de resistência",
         "forca": 2
       }
@@ -15,17 +27,17 @@
     "fora_do_limite": [],
     "sem_stop_valido": [
       {
-        "ativo": "AURE3",
-        "setups": "Cruzamento MACD + Testando suporte",
-        "motivo": "Nenhum suporte a pelo menos 1,5x o ATR abaixo do preço"
+        "ativo": "IRBR3",
+        "setups": "Cruzamento MACD + Rompimento de resistência",
+        "motivo": "Stop longe demais (8,5% abaixo; o máximo é 3x o ATR e 8%)"
       },
       {
-        "ativo": "RAIL3",
-        "setups": "Cruzamento MACD + Rompimento de resistência",
-        "motivo": "Stop longe demais (9,3% abaixo; o máximo é 3x o ATR e 8%)"
+        "ativo": "UGPA3",
+        "setups": "Cruzamento MACD + IFR sobrevendido em tendência de alta",
+        "motivo": "Stop longe demais (8,1% abaixo; o máximo é 3x o ATR e 8%)"
       }
     ],
     "canceladas": []
   },
-  "atualizado_em": "16/11/2026 08:13"
+  "atualizado_em": "17/11/2026 08:36"
 }
