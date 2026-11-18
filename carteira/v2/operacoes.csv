@@ -3,5 +3,6 @@ id,ativo,setups,forca,data_sinal,preco_ref,quantidade,stop_previsto,alvo_previst
 2026-11-06-PETR4,PETR4,IFR sobrevendido em tendência de alta + Testando suporte,2,2026-11-06,45.3,22,41.78,52.34,2.0233,Cancelada,,,,,,,2026-11-09,,"Stop longe demais (11,4% abaixo; o máximo é 3x o ATR e 8%) na abertura",,,"[27.84, 29.11, 30.24, 36.24, 39.5, 41.78, 47.43, 50.47]"
 2026-11-11-SANB11,SANB11,Cruzamento MACD + Testando suporte,2,2026-11-11,27.4,36.0,25.6,31.52,0.9122,Aberta,2026-11-12,28.9,26.9,35.6,Resistência,6.92,,,,,,"[24.85, 25.6, 26.9, 28.59, 30.52, 31.52, 32.49, 35.6]"
 2026-11-13-TAEE11,TAEE11,Cruzamento MACD + Rompimento de resistência,2,2026-11-13,42.09,23.0,39.7,46.87,1.1551,Aberta,2026-11-16,41.04,38.42,46.28,2x o risco,6.38,,,,,,"[37.11, 38.42, 39.7, 41.33, 42.57, 43.8]"
-2026-11-16-GOLD11,GOLD11,Rompimento de resistência + Testando suporte,2,2026-11-16,23.09,43,22.0,25.36,0.4822,Pendente,,,,,,,,,,,,"[21.08, 22.0, 23.02, 23.64, 24.37, 25.36]"
-2026-11-16-CPFE3,CPFE3,Cruzamento MACD + Rompimento de resistência,2,2026-11-16,44.65,22,42.59,48.82,1.3399,Pendente,,,,,,,,,,,,"[42.59, 43.99, 45.49, 47.25, 48.82, 53.38]"
+2026-11-16-GOLD11,GOLD11,Rompimento de resistência + Testando suporte,2,2026-11-16,23.09,43.0,22.0,25.36,0.4822,Aberta,2026-11-17,23.12,22.0,25.36,2x o risco,4.84,,,,,,"[21.08, 22.0, 23.02, 23.64, 24.37, 25.36]"
+2026-11-16-CPFE3,CPFE3,Cruzamento MACD + Rompimento de resistência,2,2026-11-16,44.65,22.0,42.59,48.82,1.3399,Aberta,2026-11-17,44.66,42.59,48.82,Resistência,4.64,,,,,,"[42.59, 43.99, 45.49, 47.25, 48.82, 53.38]"
+2026-11-17-ITUB4,ITUB4,Cruzamento MACD + Testando suporte,2,2026-11-17,40.89,24,38.35,49.02,1.3407,Pendente,,,,,,,,,,,,"[36.9, 38.35, 40.29, 41.67, 43.35, 49.02]"

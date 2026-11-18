@@ -2,37 +2,19 @@
   "inicio": "2026-10-05",
   "eventos_do_dia": {
     "compradas": [
-      "AURE3",
-      "RAIL3",
-      "SANB11",
-      "TAEE11"
+      "CPFE3",
+      "IRBR3",
+      "UGPA3"
     ],
-    "encerradas": [
-      {
-        "ativo": "AURE3",
-        "motivo": "Stop",
-        "resultado_pct": -2.59,
-        "resultado_rs": -25.9
-      }
-    ],
+    "encerradas": [],
     "novos_sinais": [
       {
-        "ativo": "CPFE3",
-        "setups": "Cruzamento MACD + Rompimento de resistência",
+        "ativo": "ITUB4",
+        "setups": "Cruzamento MACD + Testando suporte",
         "bem_avaliado": true
-      },
-      {
-        "ativo": "IRBR3",
-        "setups": "Cruzamento MACD + Rompimento de resistência",
-        "bem_avaliado": true
-      },
-      {
-        "ativo": "UGPA3",
-        "setups": "Cruzamento MACD + IFR sobrevendido em tendência de alta",
-        "bem_avaliado": false
       }
     ]
   },
-  "atualizado_em": "17/11/2026 08:36",
-  "ultimo_dia": "2026-11-16"
+  "atualizado_em": "18/11/2026 08:20",
+  "ultimo_dia": "2026-11-17"
 }
