@@ -76,4 +76,7 @@ id,ativo,setups,bem_avaliado,data_sinal,status,data_entrada,preco_entrada,quanti
 2026-11-16-CPFE3,CPFE3,Cruzamento MACD + Rompimento de resistência,True,2026-11-16,Aberta,2026-11-17,44.66,22.3914,43.99,47.25,Resistência,,,,,,"[42.59, 43.99, 45.49, 47.25, 48.82, 53.38]"
 2026-11-16-IRBR3,IRBR3,Cruzamento MACD + Rompimento de resistência,True,2026-11-16,Aberta,2026-11-17,60.09,16.6417,58.35,64.5,Resistência,,,,,,"[48.7, 50.46, 53.46, 55.15, 58.35, 64.5]"
 2026-11-16-UGPA3,UGPA3,Cruzamento MACD + IFR sobrevendido em tendência de alta,False,2026-11-16,Aberta,2026-11-17,32.28,30.9789,29.66,40.54,Resistência,,,,,,"[19.46, 24.72, 27.42, 29.66, 32.43, 40.54]"
-2026-11-17-ITUB4,ITUB4,Cruzamento MACD + Testando suporte,True,2026-11-17,Pendente,,,,,,,,,,,,"[36.9, 38.35, 40.29, 41.67, 43.35, 49.02]"
+2026-11-17-ITUB4,ITUB4,Cruzamento MACD + Testando suporte,True,2026-11-17,Encerrada,2026-11-18,40.79,24.5158,40.29,43.35,Resistência,2026-11-18,40.29,Stop,-1.33,-13.26,"[36.9, 38.35, 40.29, 41.67, 43.35, 49.02]"
+2026-11-18-ALOS3,ALOS3,Cruzamento MACD + Testando suporte,True,2026-11-18,Aberta,2026-11-19,26.39,37.8931,25.49,28.2,Resistência,,,,,,"[24.63, 25.49, 26.54, 27.5, 28.2, 29.26, 35.88]"
+2026-11-18-B3SA3,B3SA3,Cruzamento MACD + Testando suporte,True,2026-11-18,Aberta,2026-11-19,14.31,69.8812,13.91,15.3,Resistência,,,,,,"[13.91, 14.82, 15.3, 16.01, 17.61, 18.05, 24.27]"
+2026-11-18-PCAR3,PCAR3,Cruzamento MME 9/21 + Rompimento de resistência,True,2026-11-18,Aberta,2026-11-19,3.0,333.3333,2.81,3.54,Resistência,,,,,,"[1.98, 2.27, 2.55, 2.81, 3.06, 3.36, 3.54, 3.91, 4.11]"

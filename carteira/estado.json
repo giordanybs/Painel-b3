@@ -2,19 +2,37 @@
   "inicio": "2026-10-05",
   "eventos_do_dia": {
     "compradas": [
-      "CPFE3",
-      "IRBR3",
-      "UGPA3"
+      "ITUB4",
+      "ALOS3",
+      "B3SA3",
+      "PCAR3"
     ],
-    "encerradas": [],
-    "novos_sinais": [
+    "encerradas": [
       {
         "ativo": "ITUB4",
+        "motivo": "Stop",
+        "resultado_pct": -1.33,
+        "resultado_rs": -13.26
+      }
+    ],
+    "novos_sinais": [
+      {
+        "ativo": "ALOS3",
         "setups": "Cruzamento MACD + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "B3SA3",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "bem_avaliado": true
+      },
+      {
+        "ativo": "PCAR3",
+        "setups": "Cruzamento MME 9/21 + Rompimento de resistência",
         "bem_avaliado": true
       }
     ]
   },
-  "atualizado_em": "18/11/2026 08:20",
-  "ultimo_dia": "2026-11-17"
+  "atualizado_em": "19/11/2026 10:21",
+  "ultimo_dia": "2026-11-19"
 }
