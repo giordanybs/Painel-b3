@@ -1,23 +1,60 @@
 {
   "inicio": "2026-10-05",
   "eventos_do_dia": {
-    "compradas": [
-      "ITUB4",
-      "ALOS3",
-      "B3SA3",
-      "PCAR3"
-    ],
+    "compradas": [],
     "encerradas": [
       {
-        "ativo": "ITUB4",
+        "ativo": "PETR3",
+        "motivo": "Stop (abriu abaixo)",
+        "resultado_pct": -5.23,
+        "resultado_rs": -52.34
+      },
+      {
+        "ativo": "PETR4",
         "motivo": "Stop",
-        "resultado_pct": -1.33,
-        "resultado_rs": -13.26
+        "resultado_pct": -6.42,
+        "resultado_rs": -64.23
+      },
+      {
+        "ativo": "TAEE11",
+        "motivo": "Stop",
+        "resultado_pct": -3.37,
+        "resultado_rs": -33.65
+      },
+      {
+        "ativo": "CPFE3",
+        "motivo": "Stop (abriu abaixo)",
+        "resultado_pct": -2.76,
+        "resultado_rs": -27.65
+      },
+      {
+        "ativo": "IRBR3",
+        "motivo": "Stop",
+        "resultado_pct": -3.0,
+        "resultado_rs": -29.96
+      },
+      {
+        "ativo": "ALOS3",
+        "motivo": "Stop (abriu abaixo)",
+        "resultado_pct": -5.06,
+        "resultado_rs": -50.64
+      },
+      {
+        "ativo": "B3SA3",
+        "motivo": "Stop",
+        "resultado_pct": -2.9,
+        "resultado_rs": -28.95
+      },
+      {
+        "ativo": "PCAR3",
+        "motivo": "Alvo",
+        "resultado_pct": 17.9,
+        "resultado_rs": 179.0
       }
     ],
     "novos_sinais": [
       {
-        "ativo": "ALOS3",
+        "ativo": "AZZA3",
         "setups": "Cruzamento MACD + Testando suporte",
         "bem_avaliado": true
       },
@@ -30,9 +67,14 @@
         "ativo": "PCAR3",
         "setups": "Cruzamento MME 9/21 + Rompimento de resistência",
         "bem_avaliado": true
+      },
+      {
+        "ativo": "PSSA3",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "bem_avaliado": true
       }
     ]
   },
-  "atualizado_em": "19/11/2026 10:21",
-  "ultimo_dia": "2026-11-19"
+  "atualizado_em": "23/11/2026 14:58",
+  "ultimo_dia": "2026-11-23"
 }

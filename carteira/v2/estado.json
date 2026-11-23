@@ -1,24 +1,17 @@
 {
   "inicio": "2026-11-05",
-  "ultimo_dia": "2026-11-19",
+  "ultimo_dia": "2026-11-23",
   "eventos": {
-    "compradas": [
-      {
-        "ativo": "ITUB4",
-        "dia": "2026-11-18",
-        "preco": 40.79,
-        "quantidade": 24.0
-      }
-    ],
+    "compradas": [],
     "encerradas": [],
     "programadas": [],
     "novas_ordens": [],
     "fora_do_limite": [],
     "sem_stop_valido": [
       {
-        "ativo": "ALOS3",
+        "ativo": "AZZA3",
         "setups": "Cruzamento MACD + Testando suporte",
-        "motivo": "Stop longe demais (8,5% abaixo; o máximo é 3x o ATR e 8%)"
+        "motivo": "Nenhum suporte a pelo menos 1,5x o ATR abaixo do preço"
       },
       {
         "ativo": "B3SA3",
@@ -28,10 +21,20 @@
       {
         "ativo": "PCAR3",
         "setups": "Cruzamento MME 9/21 + Rompimento de resistência",
-        "motivo": "Stop longe demais (14,7% abaixo; o máximo é 3x o ATR e 8%)"
+        "motivo": "Stop longe demais (12,6% abaixo; o máximo é 3x o ATR e 8%)"
+      },
+      {
+        "ativo": "PSSA3",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "motivo": "Nenhum suporte a pelo menos 1,5x o ATR abaixo do preço"
+      },
+      {
+        "ativo": "SBSP3",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
+        "motivo": "Stop longe demais (11,1% abaixo; o máximo é 3x o ATR e 8%)"
       }
     ],
     "canceladas": []
   },
-  "atualizado_em": "19/11/2026 10:21"
+  "atualizado_em": "23/11/2026 14:58"
 }
