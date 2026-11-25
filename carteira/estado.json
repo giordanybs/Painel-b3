@@ -1,80 +1,40 @@
 {
   "inicio": "2026-10-05",
   "eventos_do_dia": {
-    "compradas": [],
+    "compradas": [
+      "AZZA3",
+      "B3SA3",
+      "PCAR3",
+      "PSSA3"
+    ],
     "encerradas": [
       {
-        "ativo": "PETR3",
-        "motivo": "Stop (abriu abaixo)",
-        "resultado_pct": -5.23,
-        "resultado_rs": -52.34
-      },
-      {
-        "ativo": "PETR4",
+        "ativo": "GOLD11",
         "motivo": "Stop",
-        "resultado_pct": -6.42,
-        "resultado_rs": -64.23
+        "resultado_pct": -4.2,
+        "resultado_rs": -41.98
       },
-      {
-        "ativo": "TAEE11",
-        "motivo": "Stop",
-        "resultado_pct": -3.37,
-        "resultado_rs": -33.65
-      },
-      {
-        "ativo": "CPFE3",
-        "motivo": "Stop (abriu abaixo)",
-        "resultado_pct": -2.76,
-        "resultado_rs": -27.65
-      },
-      {
-        "ativo": "IRBR3",
-        "motivo": "Stop",
-        "resultado_pct": -3.0,
-        "resultado_rs": -29.96
-      },
-      {
-        "ativo": "ALOS3",
-        "motivo": "Stop (abriu abaixo)",
-        "resultado_pct": -5.06,
-        "resultado_rs": -50.64
-      },
-      {
-        "ativo": "B3SA3",
-        "motivo": "Stop",
-        "resultado_pct": -2.9,
-        "resultado_rs": -28.95
-      },
-      {
-        "ativo": "PCAR3",
-        "motivo": "Alvo",
-        "resultado_pct": 17.9,
-        "resultado_rs": 179.0
-      }
-    ],
-    "novos_sinais": [
       {
         "ativo": "AZZA3",
-        "setups": "Cruzamento MACD + Testando suporte",
-        "bem_avaliado": true
-      },
-      {
-        "ativo": "B3SA3",
-        "setups": "Cruzamento MACD + Testando suporte",
-        "bem_avaliado": true
+        "motivo": "Stop",
+        "resultado_pct": -3.73,
+        "resultado_rs": -37.29
       },
       {
         "ativo": "PCAR3",
-        "setups": "Cruzamento MME 9/21 + Rompimento de resistência",
-        "bem_avaliado": true
+        "motivo": "Stop",
+        "resultado_pct": -1.77,
+        "resultado_rs": -17.67
       },
       {
         "ativo": "PSSA3",
-        "setups": "Cruzamento MACD + Testando suporte",
-        "bem_avaliado": true
+        "motivo": "Stop",
+        "resultado_pct": -0.73,
+        "resultado_rs": -7.26
       }
-    ]
+    ],
+    "novos_sinais": []
   },
-  "atualizado_em": "24/11/2026 09:39",
-  "ultimo_dia": "2026-11-23"
+  "atualizado_em": "25/11/2026 08:15",
+  "ultimo_dia": "2026-11-24"
 }
