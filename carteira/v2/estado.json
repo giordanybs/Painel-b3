@@ -1,22 +1,54 @@
 {
   "inicio": "2026-11-05",
-  "ultimo_dia": "2026-11-24",
+  "ultimo_dia": "2026-11-25",
   "eventos": {
     "compradas": [],
     "encerradas": [
       {
-        "ativo": "GOLD11",
-        "dia": "2026-11-24",
+        "ativo": "SANB11",
+        "dia": "2026-11-25",
         "motivo": "Stop",
-        "resultado_pct": -4.94,
-        "resultado_rs": -49.15
+        "resultado_pct": -7.02,
+        "resultado_rs": -73.04
       }
     ],
     "programadas": [],
-    "novas_ordens": [],
+    "novas_ordens": [
+      {
+        "ativo": "DIVO11",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "forca": 2
+      },
+      {
+        "ativo": "ENEV3",
+        "setups": "Cruzamento MACD + Rompimento de resistência",
+        "forca": 2
+      }
+    ],
     "fora_do_limite": [],
-    "sem_stop_valido": [],
+    "sem_stop_valido": [
+      {
+        "ativo": "AZZA3",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "motivo": "Nenhum suporte a pelo menos 1,5x o ATR abaixo do preço"
+      },
+      {
+        "ativo": "BPAC11",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "motivo": "Nenhum suporte a pelo menos 1,5x o ATR abaixo do preço"
+      },
+      {
+        "ativo": "HYPE3",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "motivo": "Stop longe demais (10,4% abaixo; o máximo é 3x o ATR e 8%)"
+      },
+      {
+        "ativo": "BOVA11",
+        "setups": "Cruzamento MACD + Testando suporte",
+        "motivo": "Stop longe demais (7,3% abaixo; o máximo é 3x o ATR e 8%)"
+      }
+    ],
     "canceladas": []
   },
-  "atualizado_em": "25/11/2026 08:15"
+  "atualizado_em": "26/11/2026 08:01"
 }
