@@ -1,48 +1,51 @@
 {
   "inicio": "2026-10-05",
   "eventos_do_dia": {
-    "compradas": [],
+    "compradas": [
+      "AZZA3",
+      "BPAC11",
+      "ENEV3",
+      "HYPE3",
+      "BOVA11",
+      "DIVO11"
+    ],
     "encerradas": [
       {
-        "ativo": "SANB11",
-        "motivo": "Stop",
-        "resultado_pct": -5.38,
-        "resultado_rs": -53.82
+        "ativo": "SBSP3",
+        "motivo": "Alvo",
+        "resultado_pct": 12.16,
+        "resultado_rs": 121.6
+      },
+      {
+        "ativo": "B3SA3",
+        "motivo": "Alvo (abriu acima)",
+        "resultado_pct": 6.03,
+        "resultado_rs": 60.31
       }
     ],
     "novos_sinais": [
       {
-        "ativo": "AZZA3",
-        "setups": "Cruzamento MACD + Testando suporte",
-        "bem_avaliado": true
-      },
-      {
-        "ativo": "BPAC11",
-        "setups": "Cruzamento MACD + Testando suporte",
-        "bem_avaliado": true
-      },
-      {
-        "ativo": "ENEV3",
+        "ativo": "CURY3",
         "setups": "Cruzamento MACD + Rompimento de resistência",
         "bem_avaliado": true
       },
       {
-        "ativo": "HYPE3",
-        "setups": "Cruzamento MACD + Testando suporte",
+        "ativo": "PSSA3",
+        "setups": "Rompimento de resistência + Testando suporte",
+        "bem_avaliado": false
+      },
+      {
+        "ativo": "RDOR3",
+        "setups": "Cruzamento MME 9/21 + Testando suporte",
         "bem_avaliado": true
       },
       {
-        "ativo": "BOVA11",
-        "setups": "Cruzamento MACD + Testando suporte",
-        "bem_avaliado": true
-      },
-      {
-        "ativo": "DIVO11",
+        "ativo": "TOTS3",
         "setups": "Cruzamento MACD + Testando suporte",
         "bem_avaliado": true
       }
     ]
   },
-  "atualizado_em": "26/11/2026 08:01",
-  "ultimo_dia": "2026-11-25"
+  "atualizado_em": "27/11/2026 08:31",
+  "ultimo_dia": "2026-11-26"
 }

@@ -6,5 +6,5 @@ id,ativo,setups,forca,data_sinal,preco_ref,quantidade,stop_previsto,alvo_previst
 2026-11-16-GOLD11,GOLD11,Rompimento de resistência + Testando suporte,2,2026-11-16,23.09,43.0,22.0,25.36,0.4822,Encerrada,2026-11-17,23.12,22.0,25.36,2x o risco,4.84,2026-11-24,22.0,Stop,-4.94,-49.15,"[21.08, 22.0, 23.02, 23.64, 24.37, 25.36]"
 2026-11-16-CPFE3,CPFE3,Cruzamento MACD + Rompimento de resistência,2,2026-11-16,44.65,22.0,42.59,48.82,1.3399,Aberta,2026-11-17,44.66,42.59,48.82,Resistência,4.64,,,,,,"[42.59, 43.99, 45.49, 47.25, 48.82, 53.38]"
 2026-11-17-ITUB4,ITUB4,Cruzamento MACD + Testando suporte,2,2026-11-17,40.89,24.0,38.35,49.02,1.3407,Aberta,2026-11-18,40.79,38.35,49.02,Resistência,5.98,,,,,,"[36.9, 38.35, 40.29, 41.67, 43.35, 49.02]"
-2026-11-25-DIVO11,DIVO11,Cruzamento MACD + Testando suporte,2,2026-11-25,119.76,8,111.98,142.9,3.4106,Pendente,,,,,,,,,,,,"[111.98, 118.56, 125.36, 130.25, 134.91, 142.9, 148.25]"
-2026-11-25-ENEV3,ENEV3,Cruzamento MACD + Rompimento de resistência,2,2026-11-25,27.53,36,25.99,30.61,0.9388,Pendente,,,,,,,,,,,,"[19.5, 21.05, 22.06, 22.67, 23.64, 24.81, 25.99, 26.77, 27.93]"
+2026-11-25-DIVO11,DIVO11,Cruzamento MACD + Testando suporte,2,2026-11-25,119.76,8.0,111.98,142.9,3.4106,Aberta,2026-11-26,120.96,111.98,142.9,Resistência,7.42,,,,,,"[111.98, 118.56, 125.36, 130.25, 134.91, 142.9, 148.25]"
+2026-11-25-ENEV3,ENEV3,Cruzamento MACD + Rompimento de resistência,2,2026-11-25,27.53,36.0,25.99,30.61,0.9388,Aberta,2026-11-26,28.21,26.77,31.09,2x o risco,5.1,,,,,,"[19.5, 21.05, 22.06, 22.67, 23.64, 24.81, 25.99, 26.77, 27.93]"
